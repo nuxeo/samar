@@ -26,7 +26,11 @@ More to come...
 
 ## Stanbol launcher
 
+TODO
+
 ## Nuxeo addons deployment
+
+TODO
 
 * nuxeo-platform-semanticentities: Stanbol connector
 
