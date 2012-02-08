@@ -16,6 +16,7 @@
   <modules>
     <module>stanbol-temis</module>
     <module>stanbol-mondeca</module>
+    <module>samar-stanbol-launcher</module>
     <module>nuxeo-platform-semantic-entities</module>
   </modules>
 
