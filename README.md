@@ -24,11 +24,31 @@ The integration (currently) requires the setup of:
 More to come...
 
 
-## Stanbol launcher
+## Quick build / setup
+
+1. Build Apache Stanbol (Incubating) from the sources:
+
+      svn co https://svn.apache.org/repos/asf/incubator/stanbol/trunk/ stanbol
+      cd stanbol && mvn install -DskipTests
+
+2. Build the Samar-specific components:
+
+      ./clone-modules.sh
+      mvn install
+
+3. Download Nuxeo 5.5 or later from http://nuxeo.com
+
+While building / downloading read the following to know who those components
+work together.
+
+
+## Project components
+
+### The Samar Stanbol launcher
 
 TODO
 
-## Nuxeo addons deployment
+### Nuxeo addons deployment
 
 TODO
 
