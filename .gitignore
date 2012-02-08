@@ -1,3 +1,7 @@
 stanbol-temis
 stanbol-mondeca
 nuxeo-platform-semantic-entities
+target
+.project
+.settings
+.classpath
