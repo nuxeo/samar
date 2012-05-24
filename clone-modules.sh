@@ -10,6 +10,10 @@ if [ ! -d stanbol-mondeca ]
 then
     git clone https://github.com/nuxeo/stanbol-mondeca
 fi
+if [ ! -d nuxeo-newsml ]
+then
+    git clone https://github.com/nuxeo/nuxeo-newsml
+fi
 if [ ! -d nuxeo-platform-semantic-entities ]
 then
     git clone https://github.com/nuxeo/nuxeo-platform-semantic-entities

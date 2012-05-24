@@ -18,6 +18,7 @@
     <module>stanbol-mondeca</module>
     <module>samar-defaultconfig</module>
     <module>samar-stanbol-launcher</module>
+    <module>nuxeo-newsml</module>
     <module>nuxeo-platform-semantic-entities</module>
   </modules>
 
