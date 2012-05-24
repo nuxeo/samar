@@ -36,6 +36,11 @@
       <artifactId>stanbol-temis</artifactId>
       <version>0.1.0-SNAPSHOT</version>
     </bundle>
+     <bundle>
+      <groupId>samar</groupId>
+      <artifactId>samar-defaultconfig</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+    </bundle>
   </startLevel>
 
 </bundles>
