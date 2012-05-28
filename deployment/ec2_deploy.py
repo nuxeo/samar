@@ -13,6 +13,7 @@ from boto.exception import EC2ResponseError
 
 
 PROJECT_PATH = abspath(join(__file__, '..', '..'))
+DEPLOYMENT_FOLDER = abspath(join(__file__, '..'))
 
 
 #IMAGE_ID = 'ami-ae05889e'  # Ubuntu 11.10 64bits for us-west-2
@@ -29,7 +30,7 @@ STANBOL_LAUNCHER_PATH = join(PROJECT_PATH, 'samar-stanbol-launcher', 'target',
 DEFAULT_MARKER = object()
 
 
-def cmd_or_fail(cmd):
+def cmd(cmd):
     code = os.system(cmd)
     if code != 0:
         raise RuntimeError("Error executing: " + cmd)
@@ -110,7 +111,7 @@ class Controller(object):
         return instances[0]
 
     def create_instance(self, instance_name, image_id, instance_type,
-                        security_groups=()):
+                        security_groups=(), ports=(22, 80, 443)):
 
         if not security_groups:
             # check whether there already exist a security group named after
@@ -127,7 +128,7 @@ class Controller(object):
                       % (instance_name, description))
                 sg = self.conn.create_security_group(instance_name,
                                                      description)
-                for port in [22, 80, 443, 8080]:
+                for port in ports:
                     sg.authorize('tcp', port, port, '0.0.0.0/0')
             else:
                 pflush("Reusing existing security group:", instance_name)
@@ -167,7 +168,8 @@ class Controller(object):
         raise RuntimeError('Failed to connect via ssh')
 
     def connect(self, instance_name, image_id, instance_type,
-                security_groups=()):
+                security_groups=(), ports=(22, 80, 443)):
+        """Connect the crontroller to the remote node, create it if missing"""
         instance = self.get_running_instance(instance_name)
 
         if instance is not None:
@@ -178,7 +180,7 @@ class Controller(object):
                   % instance_name)
 
             instance = controller.create_instance(
-                instance_name, image_id, instance_type)
+                instance_name, image_id, instance_type, ports=ports)
 
             pflush("Started instance with name '%s' at %s" % (
                 instance_name, instance.dns_name))
@@ -286,7 +288,8 @@ if __name__ == '__main__':
         keypair_name=keypair_name,
         keys_folder=keys_folder,
     )
-    controller.connect(instance_name, image_id, instance_type)
+    controller.connect(instance_name, image_id, instance_type,
+                       ports=(22, 80, 443, 9090))
 
     # TODO: wrap the nuxeo bundles as a marketplace package(s) and upload them
     # on the remote server
@@ -294,7 +297,7 @@ if __name__ == '__main__':
     #if package_link.startswith('http://'):
     #    # Fetch the last successful build of the package from a CI server for
     #    # instance
-    #    cmd_or_fail('curl -O ' + package_link)
+    #    cmd('curl -O ' + package_link)
     #    package = package_link.rsplit('/', 1)[1]
     #else:
     #    # Assume local file
@@ -308,9 +311,22 @@ if __name__ == '__main__':
     # Upload the stanbol launcher
     controller.put(STANBOL_LAUNCHER_PATH, STANBOL_LAUNCHER_FILE)
 
+    # Send a file will all the required enviroment variables
+    environment_file = join(DEPLOYMENT_FOLDER, 'stanbol_env.sh')
+    if not os.path.exists('stanbol_env.sh'):
+        print("ERROR: please copy stanbol_env_sample.sh as stanbol_env.sh"
+              " and adjust the credentials")
+        sys.exit(1)
+    controller.put(environment_file, 'stanbol_env.sh')
+
+    # Init script
+    controller.put(join(DEPLOYMENT_FOLDER, 'stanbol_init.sh'),
+                   'stanbol_init.sh')
+
     # Setup the node by running a script
     arguments = STANBOL_LAUNCHER_FILE
-    controller.exec_script('setup_node.py', sudo=True, arguments=arguments)
+    controller.exec_script(join(DEPLOYMENT_FOLDER, 'setup_node.py'),
+                           sudo=True, arguments=arguments)
 
     print("Successfully deployed demo at: http://%s/" %
           controller.instance.dns_name)

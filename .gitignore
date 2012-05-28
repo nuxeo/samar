@@ -6,3 +6,8 @@ target
 .project
 .settings
 .classpath
+*.swp
+*.swo
+*~
+
+deployment/stanbol_env.sh

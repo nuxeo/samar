@@ -3,7 +3,10 @@ from __future__ import print_function
 
 import sys
 import os
+from ConfigParser import RawConfigParser
 
+
+STANBOL_FOLDER = 'sling'
 
 NUXEO_VHOST = """\
 <VirtualHost _default_:80>
@@ -37,7 +40,7 @@ NUXEO_VHOST = """\
 """
 
 
-def cmd_or_fail(cmd):
+def cmd(cmd):
     """Fail early to make it easier to troubleshoot"""
     code = os.system(cmd)
     if code != 0:
@@ -51,9 +54,7 @@ def pflush(*args, **kwargs):
 
 
 def debconfselect(pkg, param, value):
-    cmd = "echo %s %s select %s | debconf-set-selections" % (
-        pkg, param, value)
-    cmd_or_fail(cmd)
+    cmd("echo %s %s select %s | debconf-set-selections" % (pkg, param, value))
 
 
 def check_install_nuxeo():
@@ -67,11 +68,11 @@ def check_install_nuxeo():
                                  and "datebased" in s
                                  and "apt.nuxeo.org" in s)]
     if not databased_sources:
-        cmd_or_fail('apt-add-repository '
+        cmd('apt-add-repository '
                     '"deb http://apt.nuxeo.org/ natty datebased"')
-        cmd_or_fail("wget -O- http://apt.nuxeo.org/nuxeo.key "
+        cmd("wget -O- http://apt.nuxeo.org/nuxeo.key "
                     "| apt-key add -")
-    cmd_or_fail("apt-get update && apt-get upgrade -y")
+    cmd("apt-get update && apt-get upgrade -y")
 
     # Pre-accept Sun Java license & set Nuxeo options
     debconfselect("sun-java6-jdk", "shared/accepted-sun-dlj-v1-1", "true")
@@ -81,23 +82,40 @@ def check_install_nuxeo():
     debconfselect("nuxeo", "nuxeo/database", "Autoconfigure PostgreSQL")
 
     # Install or upgrade Nuxeo
-    cmd_or_fail("export DEBIAN_FRONTEND=noninteractive; "
+    cmd("export DEBIAN_FRONTEND=noninteractive; "
                 "apt-get install -y nuxeo")
 
 
 def check_install_vhost():
-    cmd_or_fail("apt-get install -y apache2")
+    cmd("apt-get install -y apache2")
     filename = '/etc/apache2/sites-available/nuxeo'
     if not os.path.exists(filename):
         with open(filename, 'wb') as f:
             f.write(NUXEO_VHOST)
 
-    cmd_or_fail("a2enmod proxy proxy_http rewrite")
-    cmd_or_fail("a2dissite default")
-    cmd_or_fail("a2ensite nuxeo")
-    cmd_or_fail("apache2ctl -k graceful")
+    cmd("a2enmod proxy proxy_http rewrite")
+    cmd("a2dissite default")
+    cmd("a2ensite nuxeo")
+    cmd("apache2ctl -k graceful")
+
+
+def deploy_stanbol(stanbol_launcher_jar):
+    """Delete previous stanbol install and redeploy from launcher"""
+
+    pflush("Shutting down and deleting previous Stanbol server (if any).")
+    cmd('cp stanbol_init.sh /etc/init.d/stanbol')
+    cmd('cp stanbol_env.sh /etc/default/stanbol')
+    cmd('update-rc.d stanbol defaults')
+    cmd('service stanbol stop')
+    cmd('rm -rf sling')
+    cmd('rm -rf stanbol-launcher.jar')
+
+    pflush("Launching new updated Stanbol server")
+    cmd('ln -s %s stanbol-launcher.jar' % stanbol_launcher_jar)
+    cmd('service stanbol start')
 
 
 if __name__ == "__main__":
     check_install_nuxeo()
     check_install_vhost()
+    deploy_stanbol(sys.argv[1])
