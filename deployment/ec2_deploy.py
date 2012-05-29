@@ -143,6 +143,9 @@ class Controller(object):
         )
         assert len(reservation.instances) == 1
         instance = reservation.instances[0]
+        # wait a bit before creating the tag otherwise it might be impossible
+        # to fetch the status of the instance (AWS bug?).
+        sleep(0.5)
         self.conn.create_tags([instance.id], {"name": instance_name})
 
         retries = 0
@@ -313,7 +316,7 @@ if __name__ == '__main__':
 
     # Send a file will all the required enviroment variables
     environment_file = join(DEPLOYMENT_FOLDER, 'stanbol_env.sh')
-    if not os.path.exists('stanbol_env.sh'):
+    if not os.path.exists(environment_file):
         print("ERROR: please copy stanbol_env_sample.sh as stanbol_env.sh"
               " and adjust the credentials")
         sys.exit(1)

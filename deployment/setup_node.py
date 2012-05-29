@@ -3,10 +3,10 @@ from __future__ import print_function
 
 import sys
 import os
-from ConfigParser import RawConfigParser
-
 
 STANBOL_FOLDER = 'sling'
+NUXEO_CONF = '/etc/nuxeo/nuxeo.conf'
+NUXEO_HOME = '/var/lib/nuxeo/server'
 
 NUXEO_VHOST = """\
 <VirtualHost _default_:80>
@@ -54,7 +54,45 @@ def pflush(*args, **kwargs):
 
 
 def debconfselect(pkg, param, value):
+    """Preselect DPKG options before installing in non-interactive mode"""
     cmd("echo %s %s select %s | debconf-set-selections" % (pkg, param, value))
+
+
+def getconfig(filepath, param, default=None):
+    """Read a parameter from a config file"""
+    with open(filepath, 'rb') as f:
+        for line in f:
+            if line.strip().startswith('#') or '=' not in line:
+                continue
+            k, v = line.split('=', 1)
+            if k.strip() == param:
+                return v.strip()
+    return default
+
+
+def setconfig(filepath, param, value):
+    """Edit a config file to set / add a parameter to a specific value"""
+
+    with open(filepath, 'rb') as f:
+        lines = f.readlines()
+    with open(filepath, 'wb') as f:
+        updated = False
+        for line in lines:
+            if line.strip().startswith('#') or '=' not in line:
+                # keep comments and other non informative lines unchanged
+                f.write(line)
+                continue
+            k, v = line.split('=', 1)
+            if k.strip() == param:
+                # update with new value
+                f.write('%s=%s\n' % (param, value))
+                updated = True
+            else:
+                # keep line unchanged
+                f.write(line)
+        if not updated:
+            # append the new param at the end of the file
+            f.write('%s=%s\n' % (param, value))
 
 
 def check_install_nuxeo():
@@ -84,6 +122,23 @@ def check_install_nuxeo():
     # Install or upgrade Nuxeo
     cmd("export DEBIAN_FRONTEND=noninteractive; "
                 "apt-get install -y nuxeo")
+
+
+def setup_nuxeo():
+    pflush('Configuring Nuxeo server for the SAMAR demo')
+
+    # Skip wizard
+    setconfig(NUXEO_CONF, 'nuxeo.wizard.done', 'true')
+
+    # Deploy DAM is not already deployed
+    templates = getconfig(NUXEO_CONF, 'nuxeo.templates', '').split(',')
+    if not 'dam' in templates:
+        # ensure that DAM packages are deployed at next restart
+        cmd(('cat %s/nxserver/data/installAfterRestart-DAM.log '
+             ' >> %s/../data/installAfterRestart.log')
+            % (NUXEO_HOME, NUXEO_HOME))
+
+    cmd('service nuxeo restart')
 
 
 def check_install_vhost():
@@ -117,5 +172,6 @@ def deploy_stanbol(stanbol_launcher_jar):
 
 if __name__ == "__main__":
     check_install_nuxeo()
+    setup_nuxeo()
     check_install_vhost()
     deploy_stanbol(sys.argv[1])

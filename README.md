@@ -36,7 +36,7 @@ More to come...
       ./clone-modules.sh
       mvn install
 
-3. Download Nuxeo 5.5 or later from http://nuxeo.com
+3. Download Nuxeo 5.6 or later from http://nuxeo.com
 
 While building / downloading read the following to know who those components
 work together.
