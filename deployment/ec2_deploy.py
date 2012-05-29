@@ -298,23 +298,6 @@ if __name__ == '__main__':
     controller.connect(instance_name, image_id, instance_type,
                        ports=(22, 80, 443, 9090))
 
-    # TODO: wrap the nuxeo bundles as a marketplace package(s) and upload them
-    # on the remote server
-
-    #if package_link.startswith('http://'):
-    #    # Fetch the last successful build of the package from a CI server for
-    #    # instance
-    #    cmd('curl -O ' + package_link)
-    #    package = package_link.rsplit('/', 1)[1]
-    #else:
-    #    # Assume local file
-    #    package = package_link
-
-    ## Send package to EC2 instance (we don't assume that the package_link
-    ## is a public URL visible from the EC2 instance.
-    #remote_package = os.path.basename(package)
-    #controller.put(package, remote_package)
-
     # Upload the stanbol launcher
     controller.put(STANBOL_LAUNCHER_PATH, STANBOL_LAUNCHER_FILE)
 
