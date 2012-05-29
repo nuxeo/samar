@@ -27,6 +27,10 @@ STANBOL_LAUNCHER_FILE = 'samar-stanbol-launcher-0.1.0-SNAPSHOT.jar'
 STANBOL_LAUNCHER_PATH = join(PROJECT_PATH, 'samar-stanbol-launcher', 'target',
                              STANBOL_LAUNCHER_FILE)
 
+SAMAR_PACKAGE_FILE = 'samar-marketplace-0.1.0-SNAPSHOT.zip'
+SAMAR_PACKAGE_PATH = join(PROJECT_PATH, 'packaging', 'samar-marketplace',
+                          'target', SAMAR_PACKAGE_FILE)
+
 DEFAULT_MARKER = object()
 
 
@@ -314,6 +318,9 @@ if __name__ == '__main__':
     # Upload the stanbol launcher
     controller.put(STANBOL_LAUNCHER_PATH, STANBOL_LAUNCHER_FILE)
 
+    # Upload the SAMAR marketplace package
+    controller.put(SAMAR_PACKAGE_PATH, SAMAR_PACKAGE_FILE)
+
     # Send a file will all the required enviroment variables
     environment_file = join(DEPLOYMENT_FOLDER, 'stanbol_env.sh')
     if not os.path.exists(environment_file):
@@ -327,7 +334,7 @@ if __name__ == '__main__':
                    'stanbol_init.sh')
 
     # Setup the node by running a script
-    arguments = STANBOL_LAUNCHER_FILE
+    arguments = STANBOL_LAUNCHER_FILE + " " + SAMAR_PACKAGE_FILE
     controller.exec_script(join(DEPLOYMENT_FOLDER, 'setup_node.py'),
                            sudo=True, arguments=arguments)
 

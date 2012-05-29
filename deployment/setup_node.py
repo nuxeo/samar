@@ -124,7 +124,7 @@ def check_install_nuxeo():
                 "apt-get install -y nuxeo")
 
 
-def setup_nuxeo():
+def setup_nuxeo(marketplace_package=None):
     pflush('Configuring Nuxeo server for the SAMAR demo')
 
     # Skip wizard
@@ -132,11 +132,25 @@ def setup_nuxeo():
 
     # Deploy DAM is not already deployed
     templates = getconfig(NUXEO_CONF, 'nuxeo.templates', '').split(',')
+    if not 'dm' in templates:
+        # ensure that DAM packages are deployed at next restart
+        pflush('Deploying DM')
+        cmd(('cat %s/nxserver/data/installAfterRestart-DM.log '
+             ' >> %s/../data/installAfterRestart.log')
+            % (NUXEO_HOME, NUXEO_HOME))
+
     if not 'dam' in templates:
         # ensure that DAM packages are deployed at next restart
+        pflush('Deploying DAM')
         cmd(('cat %s/nxserver/data/installAfterRestart-DAM.log '
              ' >> %s/../data/installAfterRestart.log')
             % (NUXEO_HOME, NUXEO_HOME))
+
+    if marketplace_package is not None:
+        # Deploy the SAMAR addon
+        pflush('Deploying SAMAR package: ' + marketplace_package)
+        cmd(("echo 'file://%s' >> %s/../data/installAfterRestart.log")
+            % (os.path.abspath(marketplace_package), NUXEO_HOME))
 
     cmd('service nuxeo restart')
 
@@ -172,6 +186,6 @@ def deploy_stanbol(stanbol_launcher_jar):
 
 if __name__ == "__main__":
     check_install_nuxeo()
-    setup_nuxeo()
+    setup_nuxeo(sys.argv[2])
     check_install_vhost()
     deploy_stanbol(sys.argv[1])
