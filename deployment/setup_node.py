@@ -7,6 +7,9 @@ import os
 STANBOL_FOLDER = 'sling'
 NUXEO_CONF = '/etc/nuxeo/nuxeo.conf'
 NUXEO_HOME = '/var/lib/nuxeo/server'
+ENTITY_INDEX_FILE = 'dbpedia.solrindex.zip'
+ENTITY_INDEX_URL = ('http://dev.iks-project.eu/downloads/stanbol-indices/'
+                    'dbpedia-3.7/' + ENTITY_INDEX_FILE)
 
 NUXEO_VHOST = """\
 <VirtualHost _default_:80>
@@ -130,6 +133,9 @@ def setup_nuxeo(marketplace_package=None):
     # Skip wizard
     setconfig(NUXEO_CONF, 'nuxeo.wizard.done', 'true')
 
+    # TODO: use mp-install instead of installAfterRestart.log to avoid
+    # duplicate installations
+
     # Deploy DAM is not already deployed
     templates = getconfig(NUXEO_CONF, 'nuxeo.templates', '').split(',')
     if not 'dm' in templates:
@@ -181,6 +187,13 @@ def deploy_stanbol(stanbol_launcher_jar):
 
     pflush("Launching new updated Stanbol server")
     cmd('ln -s %s stanbol-launcher.jar' % stanbol_launcher_jar)
+    # TODO: is stanbol already downloading the big index or not?
+    #if not os.path.exists(ENTITY_INDEX_FILE):
+    #    cmd('wget -c ' + ENTITY_INDEX_URL)
+    #cmd('mkdir -p sling/datafiles')
+    #cmd('ln -s %s sling/datafiles/%s' % (
+    #    os.path.abspath(ENTITY_INDEX_FILE), ENTITY_INDEX_FILE))
+
     cmd('service stanbol start')
 
 
