@@ -31,7 +31,7 @@ set -e
 # Runtime parameters - feel free to customize:
 JAVA=/usr/bin/java
 JAVA_OPTS='-Xmx2g'
-STANBOL_DIR="/home/ubuntu/"
+STANBOL_DIR="/mnt/samar"
 STANBOL_JAR="$STANBOL_DIR/stanbol-launcher.jar"
 STANBOL_PID_FILE="$STANBOL_DIR/stanbol.pid"
 STANBOL_PORT=9090

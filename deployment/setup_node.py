@@ -3,7 +3,6 @@ from __future__ import print_function
 
 import sys
 import os
-from subprocess import check_output
 
 STANBOL_FOLDER = 'sling'
 NUXEO_CONF = '/etc/nuxeo/nuxeo.conf'
@@ -11,6 +10,7 @@ NUXEO_HOME = '/var/lib/nuxeo/server'
 ENTITY_INDEX_FILE = 'dbpedia.solrindex.zip'
 ENTITY_INDEX_URL = ('http://dev.iks-project.eu/downloads/stanbol-indices/'
                     'dbpedia-3.7/' + ENTITY_INDEX_FILE)
+WORKING_DIR = '/mnt/samar'
 
 NUXEO_VHOST = """\
 <VirtualHost _default_:80>
@@ -46,6 +46,7 @@ NUXEO_VHOST = """\
 
 def cmd(command):
     """Fail early to make it easier to troubleshoot"""
+    pflush("remote> " + command)
     code = os.system(command)
     if code != 0:
         raise RuntimeError("Error executing: " + command)
@@ -139,6 +140,28 @@ def check_install_nuxeo():
 def setup_nuxeo(marketplace_package=None):
     pflush('Configuring Nuxeo server for the SAMAR demo')
 
+    # Check that the repository config has the entity index (ugly patching
+    # function, should use an xml parser instead or an incremental extension
+    # point instead
+    repo_conf = NUXEO_HOME + '/nxserver/config/default-repository-config.xml'
+    index_field = '<field>entity:altnames</field>'
+
+    with open(repo_conf, 'rb') as f:
+        repo_conf_lines = f.readlines()
+
+    updated = False
+    for i, line in enumerate(repo_conf_lines):
+        if (line.strip() == '<index name="title">'
+            and repo_conf_lines[i + 1].strip() != index_field):
+            repo_conf_lines.insert(i + 1, index_field + '\n')
+            updated = True
+            break
+
+    if updated:
+        with open(repo_conf, 'wb') as f:
+            for line in repo_conf_lines:
+                f.write(line)
+
     # Skip wizard
     setconfig(NUXEO_CONF, 'nuxeo.wizard.done', 'true')
 
@@ -185,7 +208,8 @@ def check_install_vhost():
 def deploy_stanbol(stanbol_launcher_jar):
     """Delete previous stanbol install and redeploy from launcher"""
 
-    pflush("Shutting down and deleting previous Stanbol server (if any).")
+    pflush("Shutting down and deleting previous instance of "
+           "Stanbol server (if any).")
     cmd('cp stanbol_init.sh /etc/init.d/stanbol')
     cmd('cp stanbol_env.sh /etc/default/stanbol')
     cmd('update-rc.d stanbol defaults')
@@ -195,17 +219,19 @@ def deploy_stanbol(stanbol_launcher_jar):
 
     pflush("Launching new updated Stanbol server")
     cmd('ln -s %s stanbol-launcher.jar' % stanbol_launcher_jar)
-    # TODO: is stanbol already downloading the big index or not?
-    #if not os.path.exists(ENTITY_INDEX_FILE):
-    #    cmd('wget -c ' + ENTITY_INDEX_URL)
-    #cmd('mkdir -p sling/datafiles')
-    #cmd('ln -s %s sling/datafiles/%s' % (
-    #    os.path.abspath(ENTITY_INDEX_FILE), ENTITY_INDEX_FILE))
+
+    if not os.path.exists(ENTITY_INDEX_FILE):
+        pflush('Downloading entity index from ' + ENTITY_INDEX_URL)
+        cmd('wget -nv ' + ENTITY_INDEX_URL)
+    cmd('mkdir -p sling/datafiles')
+    cmd('ln -s %s sling/datafiles/%s' % (
+        os.path.abspath(ENTITY_INDEX_FILE), ENTITY_INDEX_FILE))
 
     cmd('service stanbol start')
 
 
 if __name__ == "__main__":
+    os.chdir(WORKING_DIR)
     check_install_nuxeo()
     setup_nuxeo(sys.argv[2])
     check_install_vhost()

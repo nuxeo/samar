@@ -298,11 +298,15 @@ if __name__ == '__main__':
     controller.connect(instance_name, image_id, instance_type,
                        ports=(22, 80, 443, 9090))
 
+    WORKING_DIR = '/mnt/samar/'
+    controller.cmd('sudo mkdir -p ' + WORKING_DIR)
+    controller.cmd('sudo chown -R ubuntu:ubuntu ' + WORKING_DIR)
+
     # Upload the stanbol launcher
-    controller.put(STANBOL_LAUNCHER_PATH, STANBOL_LAUNCHER_FILE)
+    controller.put(STANBOL_LAUNCHER_PATH, WORKING_DIR + STANBOL_LAUNCHER_FILE)
 
     # Upload the SAMAR marketplace package
-    controller.put(SAMAR_PACKAGE_PATH, SAMAR_PACKAGE_FILE)
+    controller.put(SAMAR_PACKAGE_PATH, WORKING_DIR + SAMAR_PACKAGE_FILE)
 
     # Send a file will all the required enviroment variables
     environment_file = join(DEPLOYMENT_FOLDER, 'stanbol_env.sh')
@@ -310,11 +314,11 @@ if __name__ == '__main__':
         print("ERROR: please copy stanbol_env_sample.sh as stanbol_env.sh"
               " and adjust the credentials")
         sys.exit(1)
-    controller.put(environment_file, 'stanbol_env.sh')
+    controller.put(environment_file, WORKING_DIR + 'stanbol_env.sh')
 
     # Init script
     controller.put(join(DEPLOYMENT_FOLDER, 'stanbol_init.sh'),
-                   'stanbol_init.sh')
+                   WORKING_DIR + 'stanbol_init.sh')
 
     # Setup the node by running a script
     arguments = STANBOL_LAUNCHER_FILE + " " + SAMAR_PACKAGE_FILE
