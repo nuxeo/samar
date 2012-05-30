@@ -12,6 +12,7 @@
       <fileset dir="src/main/resources" />
       <filterset>
         <filter token="VERSION" value="${samar.version}" />
+        <filter token="NUXEO_VERSION" value="${nuxeo.addons.version}" />
       </filterset>
     </copy>
     <copy todir="${maven.project.build.directory}">

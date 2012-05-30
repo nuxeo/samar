@@ -7,7 +7,7 @@
   <!-- <require-terms-and-conditions-acceptance>false -->
   <!-- </require-terms-and-conditions-acceptance> -->
   <platforms>
-    <platform>cap-@VERSION@</platform>
+    <platform>cap-@NUXEO_VERSION@</platform>
   </platforms>
   <license>LGPL</license>
   <license-url>http://www.gnu.org/licenses/lgpl.html</license-url>

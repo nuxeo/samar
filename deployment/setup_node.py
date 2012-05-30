@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import sys
 import os
+from subprocess import check_output
 
 STANBOL_FOLDER = 'sling'
 NUXEO_CONF = '/etc/nuxeo/nuxeo.conf'
@@ -43,11 +44,19 @@ NUXEO_VHOST = """\
 """
 
 
-def cmd(cmd):
+def cmd(command):
     """Fail early to make it easier to troubleshoot"""
-    code = os.system(cmd)
+    code = os.system(command)
     if code != 0:
-        raise RuntimeError("Error executing: " + cmd)
+        raise RuntimeError("Error executing: " + command)
+
+
+def sudocmd(command, user=None):
+    if user is not None:
+        command = "sudo -E -u " + user + " " + command
+    else:
+        command = "sudo -E " + command
+    cmd(command)
 
 
 def pflush(*args, **kwargs):
@@ -106,11 +115,11 @@ def check_install_nuxeo():
         sources = f.readlines()
         databased_sources = [s for s in sources
                              if (not s.strip().startswith('#')
-                                 and "datebased" in s
+                                 and "snapshots" in s
                                  and "apt.nuxeo.org" in s)]
     if not databased_sources:
         cmd('apt-add-repository '
-                    '"deb http://apt.nuxeo.org/ natty datebased"')
+                    '"deb http://apt.nuxeo.org/ oneiric snapshots"')
         cmd("wget -O- http://apt.nuxeo.org/nuxeo.key "
                     "| apt-key add -")
     cmd("apt-get update && apt-get upgrade -y")
@@ -133,32 +142,31 @@ def setup_nuxeo(marketplace_package=None):
     # Skip wizard
     setconfig(NUXEO_CONF, 'nuxeo.wizard.done', 'true')
 
-    # TODO: use mp-install instead of installAfterRestart.log to avoid
-    # duplicate installations
+    # Define an environment variable to locate the nuxeo configuration
+    os.environ['NUXEO_CONF'] = NUXEO_CONF
 
-    # Deploy DAM is not already deployed
-    templates = getconfig(NUXEO_CONF, 'nuxeo.templates', '').split(',')
-    if not 'dm' in templates:
-        # ensure that DAM packages are deployed at next restart
-        pflush('Deploying DM')
-        cmd(('cat %s/nxserver/data/installAfterRestart-DM.log '
-             ' >> %s/../data/installAfterRestart.log')
-            % (NUXEO_HOME, NUXEO_HOME))
+    # Shutting down nuxeo before update
+    cmd('service nuxeo stop')
 
-    if not 'dam' in templates:
-        # ensure that DAM packages are deployed at next restart
-        pflush('Deploying DAM')
-        cmd(('cat %s/nxserver/data/installAfterRestart-DAM.log '
-             ' >> %s/../data/installAfterRestart.log')
-            % (NUXEO_HOME, NUXEO_HOME))
+    # Register default nuxeo marketplace packages usually available in the
+    # wizard
+    nuxeoctl = NUXEO_HOME + '/bin/nuxeoctl'
 
-    if marketplace_package is not None:
-        # Deploy the SAMAR addon
-        pflush('Deploying SAMAR package: ' + marketplace_package)
-        cmd(("echo 'file://%s' >> %s/../data/installAfterRestart.log")
-            % (os.path.abspath(marketplace_package), NUXEO_HOME))
+    pflush('Full purge of existing marketplace packages')
+    sudocmd(nuxeoctl + ' mp-purge', user='nuxeo')
+    sudocmd(nuxeoctl + ' mp-init', user='nuxeo')
 
-    cmd('service nuxeo restart')
+    pflush('Deploying DM')
+    sudocmd(nuxeoctl + ' mp-install nuxeo-dm', user='nuxeo')
+    pflush('Deploying DAM')
+    sudocmd(nuxeoctl + ' mp-install nuxeo-dam', user='nuxeo')
+
+    pflush('Deploying / upgrading SAMAR package')
+    sudocmd(nuxeoctl + ' mp-install --nodeps file://'
+        + os.path.abspath(marketplace_package), user='nuxeo')
+
+    # Restarting nuxeo
+    cmd('service nuxeo start')
 
 
 def check_install_vhost():
