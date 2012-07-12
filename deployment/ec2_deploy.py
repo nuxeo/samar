@@ -235,7 +235,10 @@ class Controller(object):
         self.check_connected()
         script_name = os.path.basename(local)
         self.put(local, script_name)
-        self.cmd('chmod +x ' + script_name)
+        if sudo:
+            self.cmd('sudo chmod +x ' + script_name)
+        else:
+            self.cmd('chmod +x ' + script_name)
         cmd = "./%s" % script_name
         if sudo:
             cmd = "sudo " + cmd
