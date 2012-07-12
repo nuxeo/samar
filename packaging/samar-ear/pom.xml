@@ -45,6 +45,11 @@
       <artifactId>nuxeo-newsml</artifactId>
       <version>${nuxeo.addons.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.nuxeo</groupId>
+      <artifactId>nuxeo-vocapia</artifactId>
+      <version>${nuxeo.addons.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
