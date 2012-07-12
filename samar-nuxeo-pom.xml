@@ -5,22 +5,17 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>samar</groupId>
-  <artifactId>samar-parent</artifactId>
+  <artifactId>samar-nuxeo-parent</artifactId>
   <version>0.1.0-SNAPSHOT</version>
-  <name>SAMAR integration project</name>
+  <name>SAMAR integration project (Nuxeo components)</name>
   <packaging>pom</packaging>
   <scm>
     <url>http://github.com/nuxeo/samar/</url>
   </scm>
 
   <modules>
-    <module>stanbol-temis</module>
-    <!--
-    <module>stanbol-mondeca</module>
-    -->
-    <module>samar-defaultconfig</module>
-    <module>samar-stanbol-launcher</module>
     <module>nuxeo-newsml</module>
+    <module>nuxeo-vocapia</module>
     <module>nuxeo-platform-semantic-entities</module>
     <module>packaging</module>
   </modules>

@@ -34,7 +34,8 @@ More to come...
 2. Build the Samar-specific components:
 
       ./clone-modules.sh
-      mvn install
+      mvn install -f samar-nuxeo-pom.xml
+      mvn install -f samar-stanbol-pom.xml
 
 3. Download Nuxeo 5.6 or later from http://nuxeo.com
 

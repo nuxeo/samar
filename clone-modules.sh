@@ -14,6 +14,10 @@ if [ ! -d nuxeo-newsml ]
 then
     git clone https://github.com/nuxeo/nuxeo-newsml
 fi
+if [ ! -d nuxeo-vocapia ]
+then
+    git clone https://github.com/nuxeo/nuxeo-vocapia
+fi
 if [ ! -d nuxeo-platform-semantic-entities ]
 then
     git clone https://github.com/nuxeo/nuxeo-platform-semantic-entities
