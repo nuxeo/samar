@@ -319,6 +319,14 @@ if __name__ == '__main__':
         sys.exit(1)
     controller.put(environment_file, WORKING_DIR + 'stanbol_env.sh')
 
+    # Send a file with the vocapia credentials as nuxeo properties
+    samar_properties = join(DEPLOYMENT_FOLDER, 'samar.properties')
+    if not os.path.exists(samar_properties):
+        print("ERROR: please copy samar_sample.properties as samar.properties"
+              " and adjust the credentials")
+        sys.exit(1)
+    controller.put(samar_properties, WORKING_DIR + 'samar.properties')
+
     # Init script
     controller.put(join(DEPLOYMENT_FOLDER, 'stanbol_init.sh'),
                    WORKING_DIR + 'stanbol_init.sh')

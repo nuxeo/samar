@@ -7,6 +7,7 @@ import os
 STANBOL_FOLDER = 'sling'
 NUXEO_CONF = '/etc/nuxeo/nuxeo.conf'
 NUXEO_HOME = '/var/lib/nuxeo/server'
+NUXEO_CONFIG_DIR = NUXEO_HOME + '/nxserver/config'
 ENTITY_INDEX_FILE = 'dbpedia.solrindex.zip'
 ENTITY_INDEX_URL = ('http://dev.iks-project.eu/downloads/stanbol-indices/'
                     'dbpedia-3.7/' + ENTITY_INDEX_FILE)
@@ -190,6 +191,9 @@ def setup_nuxeo(marketplace_package=None):
     pflush('Deploying / upgrading SAMAR package')
     sudocmd(nuxeoctl + ' mp-install --accept=true --nodeps file://'
         + os.path.abspath(marketplace_package), user='nuxeo')
+
+    # Put the credentials file into the nuxeo config dir
+    sudocmd('cp samar.properties ' + NUXEO_CONFIG_DIR, user='nuxeo')
 
     # Restarting nuxeo
     cmd('service nuxeo start')
