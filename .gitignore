@@ -12,3 +12,4 @@ target
 *~
 
 deployment/stanbol_env.sh
+deployment/samar.properties
