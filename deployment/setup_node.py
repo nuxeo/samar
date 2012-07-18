@@ -176,16 +176,19 @@ def setup_nuxeo(marketplace_package=None):
     nuxeoctl = NUXEO_HOME + '/bin/nuxeoctl'
 
     pflush('Full purge of existing marketplace packages')
-    sudocmd(nuxeoctl + ' mp-purge', user='nuxeo')
+    sudocmd(nuxeoctl + ' mp-purge --accept true', user='nuxeo')
     sudocmd(nuxeoctl + ' mp-init', user='nuxeo')
 
     pflush('Deploying DM')
-    sudocmd(nuxeoctl + ' mp-install nuxeo-dm', user='nuxeo')
+    sudocmd(nuxeoctl + ' mp-install nuxeo-dm --accept true', user='nuxeo')
     pflush('Deploying DAM')
-    sudocmd(nuxeoctl + ' mp-install nuxeo-dam', user='nuxeo')
+    sudocmd(nuxeoctl + ' mp-install nuxeo-dam --accept true', user='nuxeo')
+
+    #pflush('Remove the previous version of the SAMAR package')
+    #sudocmd(nuxeoctl + ' mp-remove samar --accept true', user='nuxeo')
 
     pflush('Deploying / upgrading SAMAR package')
-    sudocmd(nuxeoctl + ' mp-install --nodeps file://'
+    sudocmd(nuxeoctl + ' mp-install --accept=true --nodeps file://'
         + os.path.abspath(marketplace_package), user='nuxeo')
 
     # Restarting nuxeo
