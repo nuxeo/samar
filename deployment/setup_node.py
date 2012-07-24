@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import sys
 import os
+import ConfigParser
 
 STANBOL_FOLDER = 'sling'
 NUXEO_CONF = '/etc/nuxeo/nuxeo.conf'
@@ -136,6 +137,9 @@ def check_install_nuxeo():
     # Install or upgrade Nuxeo
     cmd("export DEBIAN_FRONTEND=noninteractive; "
                 "apt-get install -y nuxeo")
+    # Additional codecs for ffmpeg
+    # TODO: uncomment the multiverse repos before updating
+    #cmd("apt-get install -y libavcodec-extra-53")
 
 
 def setup_nuxeo(marketplace_package=None):
@@ -245,6 +249,34 @@ def deploy_translation():
             " git build-essential")
         cmd("git clone https://github.com/moses-smt/mosesdecoder.git")
         cmd("(cd mosesdecoder && ./bjam -j4)")
+
+    config = ConfigParser.ConfigParser()
+    config.read('translation.ini')
+    username = config.get('ftp', 'username')
+    password = config.get('ftp', 'password')
+    server = config.get('ftp', 'server')
+
+    if not os.path.exists('Integration/wapiti-1.3.0.4samar'):
+        cmd("wget -nH -nv -r ftp://%s:%s@%s/Integration/wapiti-1.3.0.4samar"
+            % (username, password, server))
+        cmd("(cd Integration/wapiti-1.3.0.4samar && make clean && make)")
+    if not os.path.exists('Integration/models4samar'):
+        cmd("wget -nH -nv -r ftp://%s:%s@%s/Integration/models4samar"
+            % (username, password, server))
+
+    with open('Integration/models4samar/translate.sh', 'rb') as f:
+        def reconfigure(line):
+            if '=' in line:
+                key, value = line.split('=', 1)
+                try:
+                    value = config.get('paths', key)
+                    return "%s=%s\n" % (key, value.strip())
+                except ConfigParser.NoOptionError:
+                    pass
+            return line
+        translate_lines = [reconfigure(l) for l in f.readlines()]
+    with open('Integration/models4samar/translate_reconfigured.sh', 'wb') as f:
+        f.write("".join(translate_lines))
 
 
 if __name__ == "__main__":
