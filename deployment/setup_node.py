@@ -237,9 +237,20 @@ def deploy_stanbol(stanbol_launcher_jar):
     cmd('service stanbol start')
 
 
+def deploy_translation():
+    """Install the translation command"""
+    if not os.path.exists('mosesdecoder'):
+        cmd("export DEBIAN_FRONTEND=noninteractive; "
+            "sudo apt-get install -y libboost-all-dev libz-dev"
+            " git build-essential")
+        cmd("git clone https://github.com/moses-smt/mosesdecoder.git")
+        cmd("(cd mosesdecoder && ./bjam -j4)")
+
+
 if __name__ == "__main__":
     os.chdir(WORKING_DIR)
     check_install_nuxeo()
     setup_nuxeo(sys.argv[2])
     check_install_vhost()
     deploy_stanbol(sys.argv[1])
+    deploy_translation()

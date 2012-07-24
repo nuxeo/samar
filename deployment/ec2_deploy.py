@@ -331,6 +331,11 @@ if __name__ == '__main__':
     controller.put(join(DEPLOYMENT_FOLDER, 'stanbol_init.sh'),
                    WORKING_DIR + 'stanbol_init.sh')
 
+    # Send the credentials for downloading the translation model directly from
+    # the FTP server
+    controller.put(join(DEPLOYMENT_FOLDER, 'limsi_credentials.ini'),
+                   WORKING_DIR + 'limsi_credentials.ini')
+
     # Setup the node by running a script
     arguments = STANBOL_LAUNCHER_FILE + " " + SAMAR_PACKAGE_FILE
     controller.exec_script(join(DEPLOYMENT_FOLDER, 'setup_node.py'),
