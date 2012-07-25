@@ -4,6 +4,7 @@ from __future__ import print_function
 import sys
 import os
 import ConfigParser
+import re
 
 STANBOL_FOLDER = 'sling'
 NUXEO_CONF = '/etc/nuxeo/nuxeo.conf'
@@ -246,7 +247,7 @@ def deploy_translation():
     if not os.path.exists('mosesdecoder'):
         cmd("export DEBIAN_FRONTEND=noninteractive; "
             "sudo apt-get install -y libboost-all-dev libz-dev"
-            " git build-essential")
+            " git build-essential xsltproc")
         cmd("git clone https://github.com/moses-smt/mosesdecoder.git")
         cmd("(cd mosesdecoder && ./bjam -j4)")
 
@@ -275,8 +276,22 @@ def deploy_translation():
                     pass
             return line
         translate_lines = [reconfigure(l) for l in f.readlines()]
-    with open('Integration/models4samar/translate_reconfigured.sh', 'wb') as f:
+    translate_script = 'Integration/models4samar/translate_reconfigured.sh'
+    with open(translate_script, 'wb') as f:
         f.write("".join(translate_lines))
+    cmd('chmod +x ' + translate_script)
+
+    # check moses model configuration
+    moses_ini_filename = 'Integration/models4samar/moses.tuned.ini'
+    with open(moses_ini_filename, 'rb') as f:
+        moses_ini_original = f.read()
+    moses_ini_updated = re.sub(r"\/vol\/.*/([^ \/]*)",
+                               r'/mnt/samar/Integration/models4samar/\1',
+                               moses_ini_original)
+    if moses_ini_original != moses_ini_updated:
+        print("Updating " + moses_ini_filename)
+        with open(moses_ini_filename, 'wb') as f:
+            f.write(moses_ini_updated)
 
 
 if __name__ == "__main__":
