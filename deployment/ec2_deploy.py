@@ -100,7 +100,8 @@ class Controller(object):
         instances = []
         for r in self.conn.get_all_instances():
             for i in r.instances:
-                if (i.tags.get('name') == instance_name
+                if ((i.tags.get('Name') == instance_name
+                     or i.tags.get('name') == instance_name)
                     and i.state == 'running'):
                     instances.append(i)
 
@@ -150,7 +151,7 @@ class Controller(object):
         # wait a bit before creating the tag otherwise it might be impossible
         # to fetch the status of the instance (AWS bug?).
         sleep(0.5)
-        self.conn.create_tags([instance.id], {"name": instance_name})
+        self.conn.create_tags([instance.id], {"Name": instance_name})
 
         retries = 0
         delay = 10
