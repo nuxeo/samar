@@ -237,8 +237,9 @@ def deploy_stanbol(stanbol_launcher_jar):
         cmd('wget -nv ' + ENTITY_INDEX_URL)
     cmd('mkdir -p %s/datafiles' % STANBOL_FOLDER)
     cmd('ln -s %s %s/datafiles/%s' % (
-        os.path.abspath(ENTITY_INDEX_FILE), STANBOL_FOLDER, ENTITY_INDEX_FILE)
-
+        os.path.abspath(ENTITY_INDEX_FILE),
+        STANBOL_FOLDER,
+        ENTITY_INDEX_FILE))
     cmd('service stanbol start')
 
 
