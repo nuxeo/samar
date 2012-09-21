@@ -6,7 +6,7 @@ import os
 import ConfigParser
 import re
 
-STANBOL_FOLDER = 'sling'
+STANBOL_FOLDER = 'stanbol'
 NUXEO_CONF = '/etc/nuxeo/nuxeo.conf'
 NUXEO_HOME = '/var/lib/nuxeo/server'
 NUXEO_CONFIG_DIR = NUXEO_HOME + '/nxserver/config'
@@ -226,7 +226,7 @@ def deploy_stanbol(stanbol_launcher_jar):
     cmd('cp stanbol_env.sh /etc/default/stanbol')
     cmd('update-rc.d stanbol defaults')
     cmd('service stanbol stop')
-    cmd('rm -rf sling')
+    cmd('rm -rf ' + STANBOL_FOLDER)
     cmd('rm -rf stanbol-launcher.jar')
 
     pflush("Launching new updated Stanbol server")
@@ -235,9 +235,9 @@ def deploy_stanbol(stanbol_launcher_jar):
     if not os.path.exists(ENTITY_INDEX_FILE):
         pflush('Downloading entity index from ' + ENTITY_INDEX_URL)
         cmd('wget -nv ' + ENTITY_INDEX_URL)
-    cmd('mkdir -p sling/datafiles')
-    cmd('ln -s %s sling/datafiles/%s' % (
-        os.path.abspath(ENTITY_INDEX_FILE), ENTITY_INDEX_FILE))
+    cmd('mkdir -p %s/datafiles' % STANBOL_FOLDER)
+    cmd('ln -s %s %s/datafiles/%s' % (
+        os.path.abspath(ENTITY_INDEX_FILE), STANBOL_FOLDER, ENTITY_INDEX_FILE)
 
     cmd('service stanbol start')
 
