@@ -3,6 +3,7 @@ stanbol-mondeca
 nuxeo-newsml
 nuxeo-vocapia
 nuxeo-platform-semantic-entities
+samar-integration/bin
 target
 .project
 .settings

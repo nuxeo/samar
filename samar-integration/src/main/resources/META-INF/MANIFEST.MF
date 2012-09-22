@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Nuxeo-WebModule: org.nuxeo.ecm.webengine.app.WebEngineModule;name=samar;package=fr/samar
+Bundle-Vendor: Nuxeo
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Bundle-Version: 0.1.0.qualifier
+Bundle-Name: samar-integration
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: samar-integration
+Nuxeo-Component: OSGI-INF/samar-anonymous-config.xml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+
