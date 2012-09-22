@@ -4,7 +4,7 @@
 
 <div class="query">
 
-<form method="GET">
+<form id="queryForm" method="GET">
 <input class="userInput" type="text" id="q"
   name="q" value="${This.userInput}" dir="auto" />
   
@@ -17,7 +17,8 @@
 
 <ul class="entityFacets">
 <#list This.entities as entity>
-  <li>${entity.title}</li>
+  <li class="entityFacet">${entity.title}</li>
+  <div class="entityTooltip">${entity.title}</div>
 </#list>
 </ul>
 
@@ -30,7 +31,15 @@
 </div>
 
 <script type="text/javascript">
-document.getElementById("q").focus();
+<!--
+jQuery(document).ready(function() {
+  jQuery(".entityFacet").tooltip({
+    position: "bottom center",
+    tipClass: "entityTooltip",
+  });
+  document.getElementById("q").focus();
+});
+-->
 </script>
 
 </@block>

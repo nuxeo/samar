@@ -2,12 +2,14 @@
 <head>
   <title>
      <@block name="title">
-     SAMAR
+     Samar - سمر
      </@block>
   </title>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
   <link rel="stylesheet" href="${skinPath}/css/site.css" type="text/css" media="screen" charset="utf-8">
   <link rel="shortcut icon" href="${skinPath}/image/favicon.gif" />
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script>
   <@block name="stylesheets" />
   <@block name="header_scripts" />
 </head>

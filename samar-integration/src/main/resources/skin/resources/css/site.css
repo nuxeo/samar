@@ -1,19 +1,19 @@
-body, html {
-    margin: 0;
-    padding: 0;
+body,html {
+	margin: 0;
+	padding: 0;
 }
 
 body {
-    font: normal 12px Verdana, sans-serif;
+	font: normal 12px Verdana, sans-serif;
 }
 
 .header {
 	text-align: right;
-    background-color: #8d5c27;
-    background-image: url('../img/header-background.png');
-    background-repeat: repeat-x;
-    border-bottom: 1px solid black;
-    width: 100%;
+	background-color: #8d5c27;
+	background-image: url('../img/header-background.png');
+	background-repeat: repeat-x;
+	border-bottom: 1px solid black;
+	width: 100%;
 }
 
 .content {
@@ -33,5 +33,24 @@ body {
 
 .query input.userInput {
 	width: 80%;
-    font-size: 200%;
+	font-size: 200%;
+}
+
+.query ul.entityFacets {
+	list-style-type: none;
+}
+
+.query .entityFacets li {
+	display: inline;
+}
+
+.entityTooltip {
+  /* Hidden by default, jquery tools tooltip plugin will trigger the display
+       of the element */
+  display: none;
+  background-color: #fff;
+  border: 1px solid #dedede;
+  padding: 1em;
+  width: 450px;
+  box-shadow: 0 0 10px #ddd
 }

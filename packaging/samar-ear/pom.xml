@@ -50,6 +50,11 @@
       <artifactId>nuxeo-vocapia</artifactId>
       <version>${nuxeo.addons.version}</version>
     </dependency>
+    <dependency>
+      <groupId>samar</groupId>
+      <artifactId>samar-integration</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <build>
