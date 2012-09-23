@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriBuilder;
 
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -50,6 +51,9 @@ public class SamarRoot extends ModuleRoot {
                 entities.add(session.getDocument(entityRef));
                 validEntityIds.add(entityId);
             }
+        }
+        if (userInput == null) {
+            userInput = "";
         }
         userInput = NXQLQueryBuilder.sanitizeFulltextInput(userInput);
         if (!userInput.trim().isEmpty() || !validEntityIds.isEmpty()) {
@@ -91,7 +95,7 @@ public class SamarRoot extends ModuleRoot {
     }
 
     public String getBaseUrl() {
-        return uriInfo.getAbsolutePathBuilder().path(SamarRoot.class).toString();
+        return uriInfo.getAbsolutePathBuilder().build().toASCIIString();
     }
 
 }
