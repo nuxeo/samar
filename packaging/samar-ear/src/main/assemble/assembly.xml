@@ -35,6 +35,7 @@
       <artifact:set>
         <includes>
           <artifact groupId="org.nuxeo*" scope="!test" type="!pom" />
+          <artifact groupId="samar" scope="!test" type="!pom" />
         </includes>
       </artifact:set>
     </copy>
