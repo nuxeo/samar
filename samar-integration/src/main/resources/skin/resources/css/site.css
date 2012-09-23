@@ -27,17 +27,18 @@ body {
 }
 
 .query {
-	margin: 1em;
+	margin: 1em 10%;
 	text-align: center;
 }
 
 .query input.userInput {
-	width: 80%;
-	font-size: 200%;
+	width: 100%;
+	font-size: 180%;
 }
 
 .query ul.entityFacets {
 	list-style-type: none;
+	height: 3em;
 }
 
 .query .entityFacets li {
@@ -53,4 +54,31 @@ body {
   padding: 1em;
   width: 450px;
   box-shadow: 0 0 10px #ddd
+}
+
+.results {
+	margin: 1em 10%;
+}
+
+.results .resultDoc {
+	margin-top: 2em;
+}
+
+.results .resultDoc .newsMLContent {
+	max-height: 120px;
+}
+
+.results .resultDoc .lang-ar p {
+	direction: rtl;
+}
+
+.results h2 {
+	font-size: 130%;
+}
+
+.results .duration {
+	margin-top: 2em;
+	color: #ddd;
+	text-size: 30;
+	font-style: italic;
 }

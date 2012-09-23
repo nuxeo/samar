@@ -13,16 +13,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriBuilder;
 
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.platform.query.api.PageProvider;
 import org.nuxeo.ecm.platform.query.nxql.NXQLQueryBuilder;
+import org.nuxeo.ecm.platform.semanticentities.LocalEntityService;
+import org.nuxeo.ecm.platform.semanticentities.adapter.OccurrenceRelation;
 import org.nuxeo.ecm.webengine.jaxrs.session.SessionFactory;
 import org.nuxeo.ecm.webengine.model.WebObject;
 import org.nuxeo.ecm.webengine.model.impl.ModuleRoot;
+import org.nuxeo.runtime.api.Framework;
 
 /**
  * The main entry point for the users to query and browse the document base.
@@ -38,10 +42,14 @@ public class SamarRoot extends ModuleRoot {
 
     List<DocumentModel> entities = new ArrayList<DocumentModel>();
 
-    List<DocumentModel> documents = new ArrayList<DocumentModel>();
+    List<AnnotatedResult> results = new ArrayList<AnnotatedResult>();
+
+    protected long durationMilliseconds;
 
     public SamarRoot(@QueryParam("q") String userInput, @QueryParam("entity") List<String> entityIds,
             @Context HttpServletRequest request) throws ClientException {
+        long start = System.currentTimeMillis();
+        LocalEntityService entityService = Framework.getLocalService(LocalEntityService.class);
         this.userInput = userInput;
         session = SessionFactory.getSession(request);
         List<String> validEntityIds = new ArrayList<String>();
@@ -56,25 +64,41 @@ public class SamarRoot extends ModuleRoot {
             userInput = "";
         }
         userInput = NXQLQueryBuilder.sanitizeFulltextInput(userInput);
-        if (!userInput.trim().isEmpty() || !validEntityIds.isEmpty()) {
-            StringBuffer sb = new StringBuffer();
-            sb.append("SELECT * FROM Document WHERE ");
-            if (!userInput.trim().isEmpty()) {
-                sb.append(String.format("ecm:fulltext.dc:title LIKE '%s'", userInput));
-                sb.append(" AND ");
-            }
-            for (String validEntityId: validEntityIds) {
-                sb.append(String.format("semantic:entities = '%s'", validEntityId));
-                sb.append(" AND ");
-            }
-            sb.append("ecm:mixinType != 'HiddenInNavigation'");
+        StringBuffer sb = new StringBuffer();
+        sb.append("SELECT * FROM Document WHERE ");
+        if (!userInput.trim().isEmpty()) {
+            sb.append(String.format("ecm:fulltext LIKE '%s'", userInput));
             sb.append(" AND ");
-            sb.append("ecm:isCheckedInVersion = 0");
-            sb.append(" AND ");
-            sb.append("ecm:currentLifeCycleState != 'deleted'");
-            sb.append(" LIMIT 30");
-            documents.addAll(session.query(sb.toString()));
         }
+        for (String validEntityId : validEntityIds) {
+            sb.append(String.format("semantics:entities = '%s'", validEntityId));
+            sb.append(" AND ");
+        }
+        sb.append("ecm:primaryType IN ('NewsML', 'Video')");
+        sb.append(" AND ");
+        sb.append("ecm:mixinType != 'HiddenInNavigation'");
+        sb.append(" AND ");
+        sb.append("ecm:isCheckedInVersion = 0");
+        sb.append(" AND ");
+        sb.append("ecm:currentLifeCycleState != 'deleted'");
+        sb.append(" LIMIT 30");
+        String query = sb.toString();
+        DocumentModelList documents = session.query(query, 20);
+        for (DocumentModel doc : documents) {
+            PageProvider<DocumentModel> allEntities = entityService.getRelatedEntities(
+                    session, doc.getRef(), null);
+            AnnotatedResult result = new AnnotatedResult(doc,
+                    allEntities.getCurrentPage());
+            for (String entityId : entityIds) {
+                OccurrenceRelation occurrence = entityService.getOccurrenceRelation(
+                        session, doc.getRef(), new IdRef(entityId));
+                if (occurrence != null) {
+                    result.addOccurrence(occurrence);
+                }
+            }
+            results.add(result);
+        }
+        durationMilliseconds = System.currentTimeMillis() - start;
     }
 
     @GET
@@ -90,12 +114,15 @@ public class SamarRoot extends ModuleRoot {
         return entities;
     }
 
-    public List<DocumentModel> getDocuments() {
-        return documents;
+    public List<AnnotatedResult> getResults() {
+        return results;
     }
 
     public String getBaseUrl() {
         return uriInfo.getAbsolutePathBuilder().build().toASCIIString();
     }
 
+    public Double getDuration() {
+        return durationMilliseconds / 1000.;
+    }
 }
