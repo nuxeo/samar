@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -50,7 +51,7 @@ public class SamarRoot extends ModuleRoot {
     public SamarRoot(@QueryParam("q")
     String userInput, @QueryParam("entity")
     List<String> entityIds, @Context
-    HttpServletRequest request) throws ClientException {
+    HttpServletRequest request, @Context UriInfo uriInfo) throws ClientException {
         long start = System.currentTimeMillis();
         LocalEntityService entityService = Framework.getLocalService(LocalEntityService.class);
         session = SessionFactory.getSession(request);
@@ -90,7 +91,7 @@ public class SamarRoot extends ModuleRoot {
         for (DocumentModel doc : documents) {
             PageProvider<DocumentModel> allEntities = entityService.getRelatedEntities(
                     session, doc.getRef(), null);
-            AnnotatedResult result = new AnnotatedResult(doc);
+            AnnotatedResult result = new AnnotatedResult(doc, uriInfo);
             for (DocumentModel entity : allEntities.getCurrentPage()) {
                 OccurrenceRelation occurrence = entityService.getOccurrenceRelation(
                         session, doc.getRef(), entity.getRef());

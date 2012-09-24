@@ -38,6 +38,15 @@
 	    ${result.doc.note.note}
 	  </div>
 	  <#elseif result.doc.type == 'Video'>
+	  <#if result.isVideoPlayerReady()>
+      <div class="video-js-box">
+      <!-- HTML5 player -->
+      <video class="video-js" width="320" height="180" controls="controls" preload="auto"
+         poster="${result.videoPosterLink}">
+          <source src="${result.videoWebmLink}" type='video/webm' />
+      </video>
+      </div>
+      </#if>
 	  <#if result.hasSpeechTranscription()>
 	  <p class="ellipsis videoTranscription">
 	    <#list result.doc.transcription.sections as section>
