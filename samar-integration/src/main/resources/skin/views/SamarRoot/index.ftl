@@ -27,12 +27,18 @@
 <div class="results">
 
 	<#list This.results as result>
-	  <div class="resultDoc ${result.doc.type}">
+	  <div class="resultDoc ${result.doc.type} lang-${result.doc.dublincore.language}">
 	  <h2 class="headline" dir="auto">${result.doc.title}</h2>
 	  <#if result.doc.type == 'NewsML'>
-	  <div class="ellipsis newsMLContent lang-${result.doc.dublincore.language}">
-	  ${result.doc.note.note}
+	  <div class="ellipsis newsMLContent">
+	    ${result.doc.note.note}
 	  </div>
+	  <#elseif result.doc.type == 'Video'>
+	  <p class="ellipsis videoTranscription">
+	    <#list result.doc.transcription.sections as section>
+	      <span>${section.text}</span>
+	    </#list>
+	  </p>
 	  </#if>
       <ul>
       <#list result.relatedEntities as entity>
