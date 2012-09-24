@@ -87,11 +87,10 @@ public class SamarRoot extends ModuleRoot {
         for (DocumentModel doc : documents) {
             PageProvider<DocumentModel> allEntities = entityService.getRelatedEntities(
                     session, doc.getRef(), null);
-            AnnotatedResult result = new AnnotatedResult(doc,
-                    allEntities.getCurrentPage());
-            for (String entityId : entityIds) {
+            AnnotatedResult result = new AnnotatedResult(doc);
+            for (DocumentModel entity: allEntities.getCurrentPage()) {
                 OccurrenceRelation occurrence = entityService.getOccurrenceRelation(
-                        session, doc.getRef(), new IdRef(entityId));
+                        session, doc.getRef(), entity.getRef());
                 if (occurrence != null) {
                     result.addOccurrence(occurrence);
                 }

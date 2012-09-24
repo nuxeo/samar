@@ -42,9 +42,9 @@
 	  </p>
 	  </#if>
 	  </#if>
-      <ul>
-      <#list result.relatedEntities as entity>
-	     <li>${entity.title} - ${entity.id}</li>	  
+      <ul class="entityOccurrences">
+      <#list result.occurrences as occurrence>
+	     <li class="${occurrence.targetEntity.id}">${occurrence.targetEntity.title}</li>	  
 	  </#list>
 	  </ul>
 	  </div>

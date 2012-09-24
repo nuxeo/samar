@@ -56,6 +56,20 @@ body {
   box-shadow: 0 0 10px #ddd
 }
 
+ul.entityOccurrences {
+    list-style-type: none;
+	height: 3em;
+}
+
+.entityOccurrences li {
+	display: inline;
+	line-height: 200%;
+	padding: 0.5em;
+	border: 1px solid #aaa;
+	background-color: #ddd;
+}
+
+
 .results {
 	margin: 1em 10%;
 }
