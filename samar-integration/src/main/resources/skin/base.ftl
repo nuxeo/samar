@@ -12,6 +12,7 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
   <script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script>
   <script src="${skinPath}/js/jquery.dotdotdot-1.5.1.js" type="text/javascript"></script>
+  <script src="${skinPath}/js/video.js" type="text/javascript"></script>
   <@block name="stylesheets" />
   <@block name="header_scripts" />
 </head>

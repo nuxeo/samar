@@ -31,7 +31,8 @@
 <div class="results">
 
 	<#list This.results as result>
-	  <div class="resultDoc ${result.doc.type} lang-${result.doc.dublincore.language}">
+	  <div class="resultDoc ${result.doc.type} ${result.doc.id}
+	   lang-${result.doc.dublincore.language}">
 	  <h2 class="headline" dir="auto">${result.doc.title}</h2>
 	  <#if result.doc.type == 'NewsML'>
 	  <div class="ellipsis newsMLContent">
@@ -48,13 +49,15 @@
       </div>
       </#if>
 	  <#if result.hasSpeechTranscription()>
-	  <p class="ellipsis videoTranscription">
+	  <p class="videoTranscription">
 	    <#list result.doc.transcription.sections as section>
-	      <span>${section.text}</span>
+	      <span class="transcriptionSection"
+	       timecode=${section.timecode_start}>${section.text}</span>
 	    </#list>
 	  </p>
 	  </#if>
 	  </#if>
+	  <div style="clear: both" />
       <ul class="entityOccurrences">
       <#list result.occurrences as occurrence>
 	     <li class="entityOccurrence tag">
@@ -87,6 +90,18 @@ jQuery(document).ready(function() {
   jQuery(".entityOccurrence").tooltip({
     position: "top center",
     tipClass: "entityTooltip",
+  });
+  jQuery(".Video").ready(function() {
+    var videoJsElement = jQuery(this).find(".video-js");
+    if (videoJsElement.length > 0 && videoJsElement.get(0) != 'undefined') {
+      var video = videoJsElement.get(0);
+      jQuery(this).find('.transcriptionSection').css('cursor', 'pointer');
+      jQuery(this).find('.transcriptionSection').click(function() {
+        video.currentTime(parseFloat(jQuery(this).attr('timecode')));
+        video.play();
+        return false;
+      });
+    }
   });
   jQuery(document).ready(function() {
 	jQuery(".ellipsis").dotdotdot();

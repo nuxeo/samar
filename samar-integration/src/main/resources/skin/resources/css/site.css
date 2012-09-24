@@ -64,6 +64,7 @@ body {
 }
 
 ul.entityOccurrences {
+	text-align: right;
     list-style-type: none;
 	height: 3em;
 }
@@ -99,11 +100,19 @@ li.tag a.removeEntityLink {
 	margin-top: 2em;
 }
 
-.results .newsMLContent, .results .videoTranscription {
-	max-height: 100px;
+.results .newsMLContent {
+	max-height: 180px;
 	font-size: 90%;
 	color: #555;
 }
+
+ .results .videoTranscription {
+	max-height: 180px;
+	font-size: 90%;
+	color: #555;
+	overflow-y: auto;
+	padding-left: 1em; 
+ }
 
 .results .lang-ar p {
 	direction: rtl;
@@ -127,4 +136,10 @@ li.tag a.removeEntityLink {
 	color: #ddd;
 	text-size: 30;
 	font-style: italic;
+}
+
+.video-js-box {
+	float: left;
+	margin-right: 1em;
+	margin-bottom: 1em;
 }
