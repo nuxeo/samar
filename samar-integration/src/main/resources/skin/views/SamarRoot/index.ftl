@@ -97,7 +97,7 @@ jQuery(document).ready(function() {
       var video = videoJsElement.get(0);
       jQuery(this).find('.transcriptionSection').css('cursor', 'pointer');
       jQuery(this).find('.transcriptionSection').click(function() {
-        video.currentTime(parseFloat(jQuery(this).attr('timecode')));
+        video.currentTime = parseFloat(jQuery(this).attr('timecode'));
         video.play();
         return false;
       });
