@@ -65,7 +65,9 @@ body {
 }
 
 .results .resultDoc .newsMLContent {
-	max-height: 120px;
+	max-height: 100px;
+	font-size: 80%;
+	color: #333;
 }
 
 .results .resultDoc .lang-ar p {

@@ -83,7 +83,7 @@ public class SamarRoot extends ModuleRoot {
         sb.append("ecm:currentLifeCycleState != 'deleted'");
         sb.append(" LIMIT 30");
         String query = sb.toString();
-        DocumentModelList documents = session.query(query, 20);
+        DocumentModelList documents = session.query(query, 10);
         for (DocumentModel doc : documents) {
             PageProvider<DocumentModel> allEntities = entityService.getRelatedEntities(
                     session, doc.getRef(), null);
