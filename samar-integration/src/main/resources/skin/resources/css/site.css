@@ -7,6 +7,10 @@ body {
 	font: normal 12px Verdana, sans-serif;
 }
 
+.ellipsis {
+	overflow: hidden;
+}
+
 .header {
 	text-align: right;
 	background-color: #8d5c27;
