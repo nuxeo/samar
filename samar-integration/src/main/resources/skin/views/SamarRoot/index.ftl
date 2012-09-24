@@ -34,11 +34,13 @@
 	    ${result.doc.note.note}
 	  </div>
 	  <#elseif result.doc.type == 'Video'>
+	  <#if result.hasSpeechTranscription()>
 	  <p class="ellipsis videoTranscription">
 	    <#list result.doc.transcription.sections as section>
 	      <span>${section.text}</span>
 	    </#list>
 	  </p>
+	  </#if>
 	  </#if>
       <ul>
       <#list result.relatedEntities as entity>

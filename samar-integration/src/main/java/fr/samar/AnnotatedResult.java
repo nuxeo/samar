@@ -36,4 +36,8 @@ public class AnnotatedResult {
         return relatedEntities;
     }
 
+    public boolean hasSpeechTranscription() {
+        return doc.hasFacet("HasSpeechTranscription");
+    }
+
 }
