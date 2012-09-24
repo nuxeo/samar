@@ -41,10 +41,6 @@ body {
 	height: 3em;
 }
 
-.query .entityFacets li {
-	display: inline;
-}
-
 .entityTooltip {
   /* Hidden by default, jquery tools tooltip plugin will trigger the display
        of the element */
@@ -53,7 +49,14 @@ body {
   border: 1px solid #dedede;
   padding: 1em;
   width: 450px;
-  box-shadow: 0 0 10px #ddd
+  box-shadow: 0 0 10px #ddd;
+  text-align: justify;
+}
+
+.entityTooltip p {
+    max-height: 300px;
+	font-size: 90%;
+	color: #555;
 }
 
 ul.entityOccurrences {
@@ -61,14 +64,28 @@ ul.entityOccurrences {
 	height: 3em;
 }
 
-.entityOccurrences li {
+li.tag {
 	display: inline;
 	line-height: 200%;
-	padding: 0.5em;
+	padding: 0.3em;
 	border: 1px solid #aaa;
 	background-color: #ddd;
 }
 
+li.tag a, li.tag a:visited  {
+	text-decoration: none;
+	color: black;
+}
+
+li.tag a:hover {
+	text-decoration: underline;
+}
+
+li.tag a.removeEntityLink {
+	padding-left: 0.4em;
+	margin-left: 0.1em;
+	border-left: 1px solid #aaa;
+}
 
 .results {
 	margin: 1em 10%;
@@ -86,6 +103,11 @@ ul.entityOccurrences {
 
 .results .lang-ar p {
 	direction: rtl;
+}
+
+.results .lang-ar .entityTooltip p {
+	/* Summaries only in English for now */
+	direction: ltr;
 }
 
 .results .videoTranscription span:hover {

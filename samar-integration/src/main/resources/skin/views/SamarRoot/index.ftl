@@ -17,8 +17,12 @@
 
 	<ul class="entityFacets">
 	<#list This.entities as entity>
-	  <li class="entityFacet">${entity.title}</li>
-	  <div class="entityTooltip">${entity.title}</div>
+	  <li class="entityFacet tag">${entity.title} <a href="#"
+	    class="removeEntityLink" entity="${entity.id}">x</a></li>
+	  <div class="entityTooltip">
+        <h3 dir="auto">${entity.title}</h3>
+        <p class="ellipsis">${entity.entity.summary}</p>
+	  </div>
 	</#list>
 	</ul>
 
@@ -44,7 +48,12 @@
 	  </#if>
       <ul class="entityOccurrences">
       <#list result.occurrences as occurrence>
-	     <li class="${occurrence.targetEntity.id}">${occurrence.targetEntity.title}</li>	  
+	     <li class="entityOccurrence tag">
+	     <a href="${This.currentQueryUrl}&entity=${occurrence.targetEntity.id}">${occurrence.targetEntity.title}</a></li>
+ 	     <div class="entityTooltip">
+ 	       <h3 dir="auto">${occurrence.targetEntity.title}</h3>
+ 	       <p class="ellipsis">${occurrence.targetEntity.entity.summary}</p>
+ 	     </div>  
 	  </#list>
 	  </ul>
 	  </div>
@@ -57,12 +66,21 @@
 <script type="text/javascript">
 <!--
 jQuery(document).ready(function() {
+  jQuery(".removeEntityLink").click(function () {
+    var entityId = jQuery(this).attr('entity');
+    jQuery('#queryForm input[value=' + entityId +']').remove();
+    jQuery('#queryForm').submit();
+  })
   jQuery(".entityFacet").tooltip({
     position: "bottom center",
     tipClass: "entityTooltip",
   });
-  $(document).ready(function() {
-	$(".ellipsis").dotdotdot();
+  jQuery(".entityOccurrence").tooltip({
+    position: "top center",
+    tipClass: "entityTooltip",
+  });
+  jQuery(document).ready(function() {
+	jQuery(".ellipsis").dotdotdot();
 });
   document.getElementById("q").focus();
 });

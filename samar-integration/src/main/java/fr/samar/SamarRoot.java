@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriBuilder;
 
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -37,7 +38,7 @@ import org.nuxeo.runtime.api.Framework;
 public class SamarRoot extends ModuleRoot {
 
     String userInput;
-    
+
     CoreSession session;
 
     List<DocumentModel> entities = new ArrayList<DocumentModel>();
@@ -46,11 +47,12 @@ public class SamarRoot extends ModuleRoot {
 
     protected long durationMilliseconds;
 
-    public SamarRoot(@QueryParam("q") String userInput, @QueryParam("entity") List<String> entityIds,
-            @Context HttpServletRequest request) throws ClientException {
+    public SamarRoot(@QueryParam("q")
+    String userInput, @QueryParam("entity")
+    List<String> entityIds, @Context
+    HttpServletRequest request) throws ClientException {
         long start = System.currentTimeMillis();
         LocalEntityService entityService = Framework.getLocalService(LocalEntityService.class);
-        this.userInput = userInput;
         session = SessionFactory.getSession(request);
         List<String> validEntityIds = new ArrayList<String>();
         for (String entityId : entityIds) {
@@ -63,17 +65,18 @@ public class SamarRoot extends ModuleRoot {
         if (userInput == null) {
             userInput = "";
         }
-        userInput = NXQLQueryBuilder.sanitizeFulltextInput(userInput);
+        this.userInput = userInput;
+        String sanitizedInput = NXQLQueryBuilder.sanitizeFulltextInput(userInput);
         StringBuffer sb = new StringBuffer();
         sb.append("SELECT * FROM Document WHERE ");
-        if (!userInput.trim().isEmpty()) {
-            sb.append(String.format("ecm:fulltext LIKE '%s'", userInput));
+        if (!sanitizedInput.isEmpty()) {
+            sb.append(String.format("ecm:fulltext LIKE '%s'", sanitizedInput));
             sb.append(" AND ");
         }
-        for (String validEntityId : validEntityIds) {
-            sb.append(String.format("semantics:entities = '%s'", validEntityId));
-            sb.append(" AND ");
-        }
+        // for (String validEntityId : validEntityIds) {
+        // sb.append(String.format("semantics:entities = '%s'", validEntityId));
+        // sb.append(" AND ");
+        // }
         sb.append("ecm:primaryType IN ('NewsML', 'Video')");
         sb.append(" AND ");
         sb.append("ecm:mixinType != 'HiddenInNavigation'");
@@ -88,7 +91,7 @@ public class SamarRoot extends ModuleRoot {
             PageProvider<DocumentModel> allEntities = entityService.getRelatedEntities(
                     session, doc.getRef(), null);
             AnnotatedResult result = new AnnotatedResult(doc);
-            for (DocumentModel entity: allEntities.getCurrentPage()) {
+            for (DocumentModel entity : allEntities.getCurrentPage()) {
                 OccurrenceRelation occurrence = entityService.getOccurrenceRelation(
                         session, doc.getRef(), entity.getRef());
                 if (occurrence != null) {
@@ -119,6 +122,15 @@ public class SamarRoot extends ModuleRoot {
 
     public String getBaseUrl() {
         return uriInfo.getAbsolutePathBuilder().build().toASCIIString();
+    }
+
+    public String getCurrentQueryUrl() {
+        UriBuilder b = uriInfo.getAbsolutePathBuilder();
+        b.queryParam("q", userInput);
+        for (DocumentModel entity : entities) {
+            b.queryParam("entity", entity.getId());
+        }
+        return b.build().toASCIIString();
     }
 
     public Double getDuration() {
