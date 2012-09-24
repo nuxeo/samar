@@ -31,8 +31,8 @@
 <div class="results">
 
 	<#list This.results as result>
-	  <div class="resultDoc ${result.doc.type} ${result.doc.id}
-	   lang-${result.doc.dublincore.language}">
+	<div class="resultDoc ${result.doc.type} ${result.doc.id}
+	  lang-${result.doc.dublincore.language}">
 	  <h2 class="headline" dir="auto">${result.doc.title}</h2>
 	  <#if result.doc.type == 'NewsML'>
 	  <div class="ellipsis newsMLContent">
@@ -57,7 +57,7 @@
 	  </p>
 	  </#if>
 	  </#if>
-	  <div style="clear: both" />
+	  <div style="clear: both"></div>
       <ul class="entityOccurrences">
       <#list result.occurrences as occurrence>
 	     <li class="entityOccurrence tag">
@@ -68,7 +68,7 @@
  	     </div>  
 	  </#list>
 	  </ul>
-	  </div>
+	</div>
 	</#list>
 	
 	<p class="duration">${This.duration}s</p>
@@ -91,7 +91,7 @@ jQuery(document).ready(function() {
     position: "top center",
     tipClass: "entityTooltip",
   });
-  jQuery(".Video").ready(function() {
+  jQuery(".Video").each(function () {
     var videoJsElement = jQuery(this).find(".video-js");
     if (videoJsElement.length > 0 && videoJsElement.get(0) != 'undefined') {
       var video = videoJsElement.get(0);
