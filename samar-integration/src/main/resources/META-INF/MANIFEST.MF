@@ -7,6 +7,7 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Name: samar-integration
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: samar-integration
-Nuxeo-Component: OSGI-INF/samar-anonymous-config.xml
+Nuxeo-Component: OSGI-INF/samar-anonymous-config.xml,
+ OSGI-INF/samar-core-listener-contrib.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 

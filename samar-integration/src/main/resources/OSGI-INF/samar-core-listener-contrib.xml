@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<component name="fr.samar.listeners">
+  <extension target="org.nuxeo.ecm.core.event.EventServiceComponent"
+    point="listener">
+
+    <listener name="video_semanticentities" async="false" postCommit="true"
+      class="fr.samar.listener.VideoSemanticEntitiesCoreListener"
+      priority="511">
+    </listener>
+
+  </extension>
+
+</component>
