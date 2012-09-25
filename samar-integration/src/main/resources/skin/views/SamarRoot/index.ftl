@@ -17,12 +17,14 @@
 
 	<ul class="entityFacets">
 	<#list This.entities as entity>
-	  <li class="entityFacet tag">${entity.title} <a href="#"
-	    class="removeEntityLink" entity="${entity.id}">x</a></li>
+	  <li class="${entity.entity.summary?has_content?string('entityFacet tag', 'tag')}">${entity.title}
+	   <a href="#"  class="removeEntityLink" entity="${entity.id}">x</a></li>
+	  <#if entity.entity.summary?has_content>
 	  <div class="entityTooltip">
         <h3 dir="auto">${entity.title}</h3>
         <p class="ellipsis">${entity.entity.summary}</p>
 	  </div>
+	  </#if>
 	</#list>
 	</ul>
 
@@ -60,12 +62,14 @@
 	  <div style="clear: both"></div>
       <ul class="entityOccurrences">
       <#list result.occurrences as occurrence>
-	     <li class="entityOccurrence tag">
+	     <li class="${occurrence.targetEntity.entity.summary?has_content?string('entityOccurrence tag', 'tag')}">
 	     <a href="${This.currentQueryUrl}&entity=${occurrence.targetEntity.id}">${occurrence.targetEntity.title}</a></li>
+ 	     <#if occurrence.targetEntity.entity.summary?has_content>
  	     <div class="entityTooltip">
  	       <h3 dir="auto">${occurrence.targetEntity.title}</h3>
  	       <p class="ellipsis">${occurrence.targetEntity.entity.summary}</p>
  	     </div>  
+ 	     </#if>
 	  </#list>
 	  </ul>
 	</div>
@@ -105,7 +109,7 @@ jQuery(document).ready(function() {
   });
   jQuery(document).ready(function() {
 	jQuery(".ellipsis").dotdotdot();
-});
+  });
   document.getElementById("q").focus();
 });
 -->
