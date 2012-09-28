@@ -1,0 +1,5 @@
+@charset "UTF-8";
+
+
+.icon-video:before { content: '🎬'; } /* '\1f3ac' */
+.icon-doc-text:before { content: '📄'; } /* '\1f4c4' */

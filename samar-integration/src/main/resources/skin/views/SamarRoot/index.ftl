@@ -35,12 +35,13 @@
 	<#list This.results as result>
 	<div class="resultDoc ${result.doc.type} ${result.doc.id}
 	  lang-${result.doc.dublincore.language}">
-	  <h2 class="headline" dir="auto">${result.doc.title}</h2>
 	  <#if result.doc.type == 'NewsML'>
+      <h2 class="headline" dir="auto"><i class="icon-doc-text"></i> ${result.doc.title}</h2>
 	  <div class="ellipsis newsMLContent">
 	    ${result.doc.note.note}
 	  </div>
 	  <#elseif result.doc.type == 'Video'>
+      <h2 class="headline" dir="auto"><i class="icon-video"></i> ${result.doc.title}</h2>
 	  <#if result.isVideoPlayerReady()>
       <div class="video-js-box">
       <!-- HTML5 player -->
