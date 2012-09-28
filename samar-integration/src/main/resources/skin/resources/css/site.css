@@ -37,7 +37,12 @@ body {
 
 .query input.userInput {
 	width: 100%;
+  padding: .2em;
 	font-size: 180%;
+}
+
+.query input.userInput:focus {
+  border-color: orange;
 }
 
 .query ul.entityFacets {
@@ -58,28 +63,30 @@ body {
 }
 
 .entityTooltip p {
-    max-height: 300px;
+  max-height: 300px;
 	font-size: 90%;
 	color: #555;
 }
 
 ul.entityOccurrences {
 	text-align: right;
-    list-style-type: none;
+  list-style-type: none;
 	height: 3em;
 }
 
 li.tag {
-	display: inline;
-	line-height: 200%;
-	padding: 0.3em;
-	border: 1px solid #aaa;
-	background-color: #ddd;
+    background-color: #274291;
+    border: 1px solid #00144F;
+    border-radius: 3px 3px 3px 3px;
+    display: inline;
+    line-height: 200%;
+    padding: 0.1em 0.3em 0.2em;
+    color: #fff;
 }
 
 li.tag a, li.tag a:visited  {
 	text-decoration: none;
-	color: black;
+	color: #fff;
 }
 
 li.tag a:hover {
@@ -87,9 +94,8 @@ li.tag a:hover {
 }
 
 li.tag a.removeEntityLink {
-	padding-left: 0.4em;
-	margin-left: 0.1em;
-	border-left: 1px solid #aaa;
+  border-left: 1px solid #000;
+  padding: 0 0 .1em .4em;
 }
 
 .results {
