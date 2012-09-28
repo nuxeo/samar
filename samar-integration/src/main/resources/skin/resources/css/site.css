@@ -125,6 +125,11 @@ li.tag a.removeEntityLink {
 
 .results .videoTranscription span:hover {
 	color: black;
+    background-color: #ffa810;
+}
+
+.results .videoTranscription span.nowPlaying {
+	background-color: #ffe6ba;
 }
 
 .results h2 {
