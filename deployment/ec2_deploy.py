@@ -312,6 +312,7 @@ if __name__ == '__main__':
     # Upload the SAMAR marketplace package
     controller.put(SAMAR_PACKAGE_PATH, WORKING_DIR + SAMAR_PACKAGE_FILE)
 
+
     # Send a file will all the required enviroment variables
     environment_file = join(DEPLOYMENT_FOLDER, 'stanbol_env.sh')
     if not os.path.exists(environment_file):
@@ -334,8 +335,14 @@ if __name__ == '__main__':
 
     # Send the credentials for downloading the translation model directly from
     # the FTP server
-    controller.put(join(DEPLOYMENT_FOLDER, 'translation.ini'),
-                   WORKING_DIR + 'translation.ini')
+    for filename in [
+        'translation.ini',
+        'moses.tuned.ar_fr.ini',
+        'translate_ar_fr_newsml.sh',
+        'translate_ar_fr_txt.sh']:
+        controller.put(join(DEPLOYMENT_FOLDER, 'translation', filename),
+                   WORKING_DIR + filename)
+
 
     # Setup the node by running a script
     arguments = STANBOL_LAUNCHER_FILE + " " + SAMAR_PACKAGE_FILE

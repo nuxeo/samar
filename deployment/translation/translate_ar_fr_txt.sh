@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+#########################################################################################
+# Author: Souhir GAHBICHE BRAHAM
+# Description : Machine Translation of Arabic Data
+#               Translation from arabic to french
+#########################################################################################
+
+set -x
+set -e
+
+input_file=$1
+filename=`echo $input_file | sed 's/.txt//' `
+
+if [[ ${#@} != 1 ]]
+then
+  echo "Error ($(readlink -f $0)): Wrong number of arguments (${#@})"
+  echo "Usage: translate.sh arabic-file.xml"
+  exit 1
+fi
+
+ar_fr_root=/mnt/samar/Integration/AR-FR
+tmp=/tmp
+dir_wapiti=$ar_fr_root/version1/wapiti-1.3.0.4samar/
+dir_soupiti=$ar_fr_root/version2/wapiti-1.3.0.4samar/ArabicSplit
+
+filterdecoder=/mnt/samar/mosesdecoder/scripts/training/filter-model-given-input.pl
+mosesdecoder=/mnt/samar/mosesdecoder/moses-cmd/src/bin/gcc-4.6/release/debug-symbols-on/link-static/threading-multi/moses
+mosesini=/mnt/samar/moses.tuned.ar_fr.ini
+
+modelsoupiti=$ar_fr_root/version1/models4samar/modelPOS+SEG-final-0.1.crf
+detok=/mnt/samar/detok4samar.bash
+
+last=`echo $filename | tr '/' '\n' | tail -1`
+details=details.$last
+
+# soupiti preprocess
+cp $filename.txt $filename.brut
+$dir_wapiti/ArabicSplit/segment.sh $filename $dir_wapiti $modelsoupiti
+
+rm $filename.*punc
+#rm $input_file.*cl
+#rm $input_file.*lv
+#rm $input_file.*sgm*
+rm $filename.*norm
+rm $filename.*wa*
+
+# Moses
+# filtrer le Modele de trad et le modele de reordering
+rm -rf filtered.nc-test.$last
+$filterdecoder filtered.nc-test.$last $mosesini $filename.result 
+
+# Traduction  
+( $mosesdecoder -config filtered.nc-test.$last/moses.ini -translation-details $details -input-file $filename.result > $filename.out.fr ) >& tuned.decode.log.$last
+
+# Detokenisation
+$detok $dir_soupiti $filename.out.fr
+cp $filename.out.fr.detok $filename.fr.txt

@@ -4,7 +4,6 @@ from __future__ import print_function
 import sys
 import os
 import ConfigParser
-import re
 
 STANBOL_FOLDER = 'stanbol'
 NUXEO_CONF = '/etc/nuxeo/nuxeo.conf'
@@ -258,41 +257,20 @@ def deploy_translation():
     password = config.get('ftp', 'password')
     server = config.get('ftp', 'server')
 
-    if not os.path.exists('Integration/wapiti-1.3.0.4samar'):
-        cmd("wget -nH -nv -r ftp://%s:%s@%s/Integration/wapiti-1.3.0.4samar"
-            % (username, password, server))
-        cmd("(cd Integration/wapiti-1.3.0.4samar && make clean && make)")
-    if not os.path.exists('Integration/models4samar'):
-        cmd("wget -nH -nv -r ftp://%s:%s@%s/Integration/models4samar"
+    # Download the models and translation scripts
+    if not os.path.exists('Integration'):
+        cmd("wget -nH -nv -r ftp://%s:%s@%s/Integration"
             % (username, password, server))
 
-    with open('Integration/models4samar/translate.sh', 'rb') as f:
-        def reconfigure(line):
-            if '=' in line:
-                key, value = line.split('=', 1)
-                try:
-                    value = config.get('paths', key)
-                    return "%s=%s\n" % (key, value.strip())
-                except ConfigParser.NoOptionError:
-                    pass
-            return line
-        translate_lines = [reconfigure(l) for l in f.readlines()]
-    translate_script = 'Integration/models4samar/translate_reconfigured.sh'
-    with open(translate_script, 'wb') as f:
-        f.write("".join(translate_lines))
-    cmd('chmod +x ' + translate_script)
+    # Build wapiti
+    wapiti_path = 'Integration/AR-FR/version1/wapiti-1.3.0.4samar'
+    if not os.path.exists(wapiti_path):
+        cmd("wget -nH -nv -r ftp://%s:%s@%s/%s"
+            % (username, password, server, wapiti_path))
+        cmd("(cd %s && make clean && make)" % wapiti_path)
 
-    # check moses model configuration
-    moses_ini_filename = 'Integration/models4samar/moses.tuned.ini'
-    with open(moses_ini_filename, 'rb') as f:
-        moses_ini_original = f.read()
-    moses_ini_updated = re.sub(r"\/vol\/.*/([^ \/]*)",
-                               r'/mnt/samar/Integration/models4samar/\1',
-                               moses_ini_original)
-    if moses_ini_original != moses_ini_updated:
-        print("Updating " + moses_ini_filename)
-        with open(moses_ini_filename, 'wb') as f:
-            f.write(moses_ini_updated)
+    # Ensure that the translation scripts are executable
+    cmd('chmod +x ' + '*.sh')
 
 
 if __name__ == "__main__":
