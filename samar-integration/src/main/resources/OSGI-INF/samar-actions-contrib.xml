@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="fr.samar.actions">
+
+  <require>org.nuxeo.ecm.platform.actions</require>
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+
+    <action id="WORKLIST_TRANSLATION"
+      link="#{translationActions.translateCurrentList}"
+      label="command.worklist.translate"
+      icon="/icons/EntityContainer.png">
+      <category>DEFAULT_LIST</category>
+      <filter id="currentWorkListIsNotEmptyXML">
+        <rule grant="false">
+          <condition>#{clipboardActions.workListEmpty}</condition>
+        </rule>
+      </filter>
+    </action>
+
+  </extension>
+
+</component>

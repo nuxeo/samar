@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<component name="fr.samar.translation.service">
+
+  <implementation class="fr.samar.translation.TranslationService" />
+
+  <service>
+    <provide interface="fr.samar.translation.TranslationService" />
+  </service>
+
+</component>
