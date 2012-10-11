@@ -12,6 +12,7 @@ Nuxeo-Component: OSGI-INF/samar-anonymous-config.xml,
  OSGI-INF/samar-core-listener-contrib.xml,
  OSGI-INF/samar-adapter-contrib.xml,
  OSGI-INF/samar-actions-contrib.xml,
- OSGI-INF/samar-translation-service.xml
+ OSGI-INF/samar-translation-service.xml,
+ OSGI-INF/samar-commandline-contrib.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 

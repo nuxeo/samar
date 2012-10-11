@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<component name="fr.samar.translation.commandline">
+
+  <require>org.nuxeo.ecm.platform.commandline.executor.service.defaultContrib
+  </require>
+
+  <extension
+    target="org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent"
+    point="command">
+
+    <command name="translate_ar_fr_txt" enabled="true">
+      <commandLine>translate_ar_fr_txt</commandLine>
+      <parameterString>#{inputFile}</parameterString>
+      <installationDirective>You need to install translate_ar_fr_txt
+      </installationDirective>
+    </command>
+
+    <command name="translate_ar_fr_xml" enabled="true">
+      <commandLine>translate_ar_fr_xml</commandLine>
+      <parameterString>#{inputFile}</parameterString>
+      <installationDirective>You need to install translate_ar_fr_xml
+      </installationDirective>
+    </command>
+
+  </extension>
+
+</component>

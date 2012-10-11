@@ -1,7 +1,6 @@
 package fr.samar.translation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,21 +34,16 @@ public class TranslationTask {
         fieldsToTranslate.add(fieldSpec);
     }
 
+    public List<Map<String, Object>> getFieldsToTranslate() {
+        return fieldsToTranslate;
+    }
+
     public List<Map<String, Object>> getTranslatedFields() {
         return translatedFields;
     }
 
     public void addTranslationResult(Map<String, Object> translationResult) {
         translatedFields.add(translationResult);
-    }
-
-    public List<Map<String, Object>> getSubTasks() {
-        List<Map<String, Object>> subTasks = new ArrayList<Map<String, Object>>();
-        for (Map<String, Object> fieldSpec : fieldsToTranslate) {
-            Map<String, Object> subTask = new HashMap<String, Object>();
-            subTask.putAll(fieldSpec);
-        }
-        return subTasks;
     }
 
 }

@@ -71,7 +71,7 @@ public class TranslationWork extends AbstractWork {
         tempFolder.mkdir();
         try {
             for (String targetLanguage : targetLanguages) {
-                for (Map<String, Object> subTask : task.getSubTasks()) {
+                for (Map<String, Object> subTask : task.getFieldsToTranslate()) {
                     if (isSuspending()) {
                         return;
                     }
