@@ -13,6 +13,12 @@ public interface TranslationAdapter {
 
     public static final String TRANSLATED_FIELDS = "translation:fields";
 
+    public static final String PROPERTY_PATH = "propertyPath";
+
+    public static final String TEXT = "text";
+
+    public static final String IS_FORMATTED = "isFormatted";
+
     TranslationTask getTranslationTask() throws PropertyException,
             ClientException;
 

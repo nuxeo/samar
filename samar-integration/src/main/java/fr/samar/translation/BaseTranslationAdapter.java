@@ -24,8 +24,8 @@ public class BaseTranslationAdapter implements TranslationAdapter {
 
     public void addFieldToTranslate(String propertyPath, boolean isFormatted) {
         Map<String, Object> field = new HashMap<String, Object>();
-        field.put(TranslationTask.PROPERTY_PATH, propertyPath);
-        field.put(TranslationTask.IS_FORMATTED, isFormatted);
+        field.put(PROPERTY_PATH, propertyPath);
+        field.put(IS_FORMATTED, isFormatted);
         fieldsToTranslate.add(field);
     }
 
@@ -49,8 +49,8 @@ public class BaseTranslationAdapter implements TranslationAdapter {
             Map<String, Object> fieldSpec = new HashMap<String, Object>();
             fieldSpec.putAll(fieldToTranslate);
             try {
-                String sourceText = (String) doc.getPropertyValue((String) fieldToTranslate.get(TranslationTask.PROPERTY_PATH));
-                fieldSpec.put(TranslationTask.TEXT, sourceText);
+                String sourceText = (String) doc.getPropertyValue((String) fieldToTranslate.get(PROPERTY_PATH));
+                fieldSpec.put(TEXT, sourceText);
                 task.addFieldToTranslate(fieldSpec);
             } catch (PropertyException e) {
                 // missing property on this document type: ignore

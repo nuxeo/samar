@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<xs:schema targetNamespace="http://www.nuxeo.org/ecm/schemas/translation/"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:nxs="http://www.nuxeo.org/ecm/schemas/translation/">
+
+  <xs:include schemaLocation="core-types.xsd" />
+
+  <xs:simpleType name="longString">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="16384" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="fields">
+    <xs:sequence>
+      <xs:element name="item" type="nxs:field" minOccurs="0"
+        maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="field">
+    <xs:sequence>
+      <xs:element name="text" type="nxs:longString" />
+      <xs:element name="propertyPath" type="xs:string" />
+      <xs:element name="language" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="fields" type="nxs:fields" />
+
+</xs:schema>

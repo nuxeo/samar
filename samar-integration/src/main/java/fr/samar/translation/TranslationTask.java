@@ -15,12 +15,6 @@ import java.util.Map;
  */
 public class TranslationTask {
 
-    public static final String PROPERTY_PATH = "propertyPath";
-
-    public static final String TEXT = "text";
-
-    public static final String IS_FORMATTED = "isFormatted";
-
     public static final String LANGUAGE = "language";
 
     protected String sourceLanguage;

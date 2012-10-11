@@ -8,6 +8,7 @@ Bundle-Name: samar-integration
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: samar-integration
 Nuxeo-Component: OSGI-INF/samar-anonymous-config.xml,
+ OSGI-INF/samar-core-types-contrib.xml,
  OSGI-INF/samar-core-listener-contrib.xml,
  OSGI-INF/samar-adapter-contrib.xml,
  OSGI-INF/samar-actions-contrib.xml,

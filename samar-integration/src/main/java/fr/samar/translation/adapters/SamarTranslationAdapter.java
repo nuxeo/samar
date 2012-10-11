@@ -43,10 +43,10 @@ public class SamarTranslationAdapter extends BaseTranslationAdapter implements
             for (Map<String, String> relatedResource : resources) {
                 if (relatedResource.get("relatedtextid").equals("transcription")) {
                     Map<String, Object> field = new HashMap<String, Object>();
-                    field.put(TranslationTask.PROPERTY_PATH,
+                    field.put(PROPERTY_PATH,
                             "relatedtext:relatedtextresources_transcription");
-                    field.put(TranslationTask.IS_FORMATTED, false);
-                    field.put(TranslationTask.TEXT, false);
+                    field.put(IS_FORMATTED, false);
+                    field.put(TEXT, false);
                     task.addFieldToTranslate(field);
                     break;
                 }

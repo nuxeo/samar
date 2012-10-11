@@ -15,11 +15,6 @@ import org.nuxeo.ecm.core.api.DocumentLocation;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
-import org.nuxeo.ecm.core.api.event.CoreEventConstants;
-import org.nuxeo.ecm.core.api.event.DocumentEventCategories;
-import org.nuxeo.ecm.core.event.Event;
-import org.nuxeo.ecm.core.event.EventService;
-import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.core.work.AbstractWork;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandAvailability;
@@ -83,14 +78,14 @@ public class TranslationWork extends AbstractWork {
                     String translated = performTranslation(
                             task.getSourceLanguage(),
                             targetLanguage,
-                            (String) subTask.get(TranslationTask.PROPERTY_PATH),
-                            (String) subTask.get(TranslationTask.TEXT),
-                            (Boolean) subTask.get(TranslationTask.IS_FORMATTED),
+                            (String) subTask.get(TranslationAdapter.PROPERTY_PATH),
+                            (String) subTask.get(TranslationAdapter.TEXT),
+                            (Boolean) subTask.get(TranslationAdapter.IS_FORMATTED),
                             tempFolder);
                     Map<String, Object> translationResult = new HashMap<String, Object>();
-                    translationResult.put(TranslationTask.TEXT, translated);
-                    translationResult.put(TranslationTask.IS_FORMATTED,
-                            translated);
+                    translationResult.put(TranslationAdapter.TEXT, translated);
+                    translationResult.put(TranslationAdapter.PROPERTY_PATH,
+                            subTask.get(TranslationAdapter.PROPERTY_PATH));
                     translationResult.put(TranslationTask.LANGUAGE,
                             targetLanguage);
                     task.addTranslationResult(translationResult);
@@ -178,19 +173,19 @@ public class TranslationWork extends AbstractWork {
                     adapter.setTranslationResults(task);
                     session.saveDocument(doc);
 
-                    // Notify transcription completion to make it possible to
-                    // chain processing.
-                    DocumentEventContext ctx = new DocumentEventContext(
-                            session, getPrincipal(), doc);
-                    ctx.setProperty(CoreEventConstants.REPOSITORY_NAME,
-                            repositoryName);
-                    ctx.setProperty(CoreEventConstants.SESSION_ID,
-                            session.getSessionId());
-                    ctx.setProperty("category",
-                            DocumentEventCategories.EVENT_DOCUMENT_CATEGORY);
-                    Event event = ctx.newEvent(EVENT_TRANSLATION_COMPLETE);
-                    EventService eventService = Framework.getLocalService(EventService.class);
-                    eventService.fireEvent(event);
+//                    // Notify transcription completion to make it possible to
+//                    // chain processing.
+//                    DocumentEventContext ctx = new DocumentEventContext(
+//                            session, getPrincipal(), doc);
+//                    ctx.setProperty(CoreEventConstants.REPOSITORY_NAME,
+//                            repositoryName);
+//                    ctx.setProperty(CoreEventConstants.SESSION_ID,
+//                            session.getSessionId());
+//                    ctx.setProperty("category",
+//                            DocumentEventCategories.EVENT_DOCUMENT_CATEGORY);
+//                    Event event = ctx.newEvent(EVENT_TRANSLATION_COMPLETE);
+//                    EventService eventService = Framework.getLocalService(EventService.class);
+//                    eventService.fireEvent(event);
                 }
             }
         }.runUnrestricted();
