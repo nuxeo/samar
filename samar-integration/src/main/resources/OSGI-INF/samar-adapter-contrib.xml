@@ -4,10 +4,8 @@
 
   <extension target="org.nuxeo.ecm.core.api.DocumentAdapterService"
     point="adapters">
-    <adapter class="fr.samar.translation.adapters.NewsMLTranslationAdapter"
-      factory="fr.samar.translation.adapters.NewsMLTranslationAdapter" />
-    <adapter class="fr.samar.translation.adapters.VideoTranslationAdapter"
-      factory="fr.samar.translation.adapters.VideoTranslationAdapter" />
+    <adapter class="fr.samar.translation.TranslationAdapter"
+      factory="fr.samar.translation.adapters.SamarTranslationAdapter" />
   </extension>
 
 </component>

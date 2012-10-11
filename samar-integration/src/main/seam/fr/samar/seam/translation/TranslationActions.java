@@ -41,7 +41,7 @@ public class TranslationActions {
                 launchAsyncTranslation(doc);
             }
             facesMessages.add(StatusMessage.Severity.INFO,
-                    messages.get("status.worklist.semanticAnalysis"),
+                    messages.get("status.worklist.lanchedTranslation"),
                     docList.size());
         } 
     }

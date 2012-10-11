@@ -48,9 +48,14 @@ public class BaseTranslationAdapter implements TranslationAdapter {
         for (Map<String, Object> fieldToTranslate : getFieldsToTranslate()) {
             Map<String, Object> fieldSpec = new HashMap<String, Object>();
             fieldSpec.putAll(fieldToTranslate);
-            String sourceText = (String) doc.getPropertyValue((String) fieldToTranslate.get(TranslationTask.PROPERTY_PATH));
-            fieldSpec.put(TranslationTask.TEXT, sourceText);
-            task.addFieldToTranslate(fieldSpec);
+            try {
+                String sourceText = (String) doc.getPropertyValue((String) fieldToTranslate.get(TranslationTask.PROPERTY_PATH));
+                fieldSpec.put(TranslationTask.TEXT, sourceText);
+                task.addFieldToTranslate(fieldSpec);
+            } catch (PropertyException e) {
+                // missing property on this document type: ignore
+                continue;
+            }
         }
         return task;
     }
