@@ -10,11 +10,18 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.common.collections.ScopeType;
+import org.nuxeo.common.utils.StringUtils;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.DocumentLocation;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
+import org.nuxeo.ecm.core.api.event.CoreEventConstants;
+import org.nuxeo.ecm.core.api.event.DocumentEventCategories;
+import org.nuxeo.ecm.core.event.Event;
+import org.nuxeo.ecm.core.event.EventService;
+import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.core.work.AbstractWork;
 import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandAvailability;
@@ -35,7 +42,7 @@ public class TranslationWork extends AbstractWork {
 
     private static final Log log = LogFactory.getLog(TranslationWork.class);
 
-    protected static final String EVENT_TRANSLATION_COMPLETE = null;
+    protected static final String EVENT_TRANSLATION_COMPLETE = "TranslationComplete";
 
     protected final DocumentLocation docLoc;
 
@@ -60,6 +67,10 @@ public class TranslationWork extends AbstractWork {
     public void work() throws Exception {
         setProgress(Progress.PROGRESS_INDETERMINATE);
         TranslationTask task = makeTranslationTask();
+        if (task == null) {
+            // nothing to do
+            return;
+        }
 
         // Release the current transaction as the following calls will be very
         // long and won't need access to any persistent transactional resources
@@ -128,6 +139,7 @@ public class TranslationWork extends AbstractWork {
             String targetLanguage, String fieldName, String text,
             boolean isFormatted, File tempFolder) throws IOException,
             ClientException, CommandNotAvailable {
+        setStatus("translating");
         if (text == null || text.trim().isEmpty()) {
             // Nothing to translate
             return "";
@@ -171,21 +183,26 @@ public class TranslationWork extends AbstractWork {
                     TranslationAdapter adapter = doc.getAdapter(
                             TranslationAdapter.class, true);
                     adapter.setTranslationResults(task);
+                    String comment = "Automated translation from: "
+                            + task.getSourceLanguage() + " to: "
+                            + StringUtils.join(targetLanguages.toArray(), ", ");
+                    doc.getContextData().putScopedValue(ScopeType.REQUEST,
+                            "comment", comment);
                     session.saveDocument(doc);
 
-//                    // Notify transcription completion to make it possible to
-//                    // chain processing.
-//                    DocumentEventContext ctx = new DocumentEventContext(
-//                            session, getPrincipal(), doc);
-//                    ctx.setProperty(CoreEventConstants.REPOSITORY_NAME,
-//                            repositoryName);
-//                    ctx.setProperty(CoreEventConstants.SESSION_ID,
-//                            session.getSessionId());
-//                    ctx.setProperty("category",
-//                            DocumentEventCategories.EVENT_DOCUMENT_CATEGORY);
-//                    Event event = ctx.newEvent(EVENT_TRANSLATION_COMPLETE);
-//                    EventService eventService = Framework.getLocalService(EventService.class);
-//                    eventService.fireEvent(event);
+                    // Notify transcription completion to make it possible to
+                    // chain processing.
+                    DocumentEventContext ctx = new DocumentEventContext(
+                            session, getPrincipal(), doc);
+                    ctx.setProperty(CoreEventConstants.REPOSITORY_NAME,
+                            repositoryName);
+                    ctx.setProperty(CoreEventConstants.SESSION_ID,
+                            session.getSessionId());
+                    ctx.setProperty("category",
+                            DocumentEventCategories.EVENT_DOCUMENT_CATEGORY);
+                    Event event = ctx.newEvent(EVENT_TRANSLATION_COMPLETE);
+                    EventService eventService = Framework.getLocalService(EventService.class);
+                    eventService.fireEvent(event);
                 }
             }
         }.runUnrestricted();

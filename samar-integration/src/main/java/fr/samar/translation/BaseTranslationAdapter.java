@@ -6,11 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.model.PropertyException;
 
 public class BaseTranslationAdapter implements TranslationAdapter {
+
+    private static final Log log = LogFactory.getLog(BaseTranslationAdapter.class);
 
     protected final DocumentModel doc;
 
@@ -37,6 +41,9 @@ public class BaseTranslationAdapter implements TranslationAdapter {
             ClientException {
         String sourceLanguage = (String) doc.getPropertyValue(DC_LANGUAGE);
         if (sourceLanguage == null) {
+            log.warn(String.format(
+                    "Cannot translate document '%s' / %s because of unknown source language",
+                    doc.getTitle(), doc.getRef()));
             return null;
         }
         TranslationTask task = new TranslationTask();
