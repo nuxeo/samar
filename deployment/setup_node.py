@@ -270,7 +270,11 @@ def deploy_translation():
         cmd("(cd %s && make clean && make)" % wapiti_path)
 
     # Ensure that the translation scripts are executable
-    cmd('chmod +x ' + '*.sh')
+    for scriptname in ['translate_ar_fr_xml', 'translate_ar_fr_txt']:
+        cmd('chmod +x ' + scriptname)
+        cmd('rm -rf /usr/local/bin/' + scriptname)
+        cmd('ln -s /mnt/samar/%s /usr/local/bin/%s'
+            % (scriptname, scriptname))
 
 
 if __name__ == "__main__":

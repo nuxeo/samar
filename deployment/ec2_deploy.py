@@ -338,8 +338,8 @@ if __name__ == '__main__':
     for filename in [
         'translation.ini',
         'moses.tuned.ar_fr.ini',
-        'translate_ar_fr_newsml.sh',
-        'translate_ar_fr_txt.sh']:
+        'translate_ar_fr_xml',
+        'translate_ar_fr_txt']:
         controller.put(join(DEPLOYMENT_FOLDER, 'translation', filename),
                    WORKING_DIR + filename)
 
