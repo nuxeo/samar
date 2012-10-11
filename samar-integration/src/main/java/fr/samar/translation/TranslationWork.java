@@ -28,8 +28,6 @@ import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
-import com.google.common.io.Files;
-
 /**
  * Handle the asynchronous translation of document fields using document
  * adaptors to make it possible to override text content is to be extracted for
@@ -73,7 +71,9 @@ public class TranslationWork extends AbstractWork {
         if (isTransactional()) {
             TransactionHelper.commitOrRollbackTransaction();
         }
-        File tempFolder = Files.createTempDir();
+        File tempFolder = File.createTempFile("nuxeo_translation_", "_tmp");
+        tempFolder.delete();
+        tempFolder.mkdir();
         try {
             for (String targetLanguage : targetLanguages) {
                 for (Map<String, Object> subTask : task.getSubTasks()) {

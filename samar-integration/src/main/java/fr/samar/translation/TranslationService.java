@@ -9,7 +9,7 @@ import org.nuxeo.runtime.model.DefaultComponent;
 
 public class TranslationService extends DefaultComponent {
 
-    public void launchTranscription(DocumentLocation docLoc) {
+    public void launchTranslation(DocumentLocation docLoc) {
         WorkManager workManager = Framework.getLocalService(WorkManager.class);
         workManager.schedule(makeWork(docLoc),
                 Scheduling.IF_NOT_RUNNING_OR_SCHEDULED);

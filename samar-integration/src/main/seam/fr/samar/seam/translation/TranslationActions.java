@@ -48,7 +48,7 @@ public class TranslationActions {
 
     public void launchAsyncTranslation(DocumentModel doc) {
         TranslationService translationService = Framework.getLocalService(TranslationService.class);
-        translationService.launchTranscription(new DocumentLocationImpl(doc));
+        translationService.launchTranslation(new DocumentLocationImpl(doc));
     }
     
 }
