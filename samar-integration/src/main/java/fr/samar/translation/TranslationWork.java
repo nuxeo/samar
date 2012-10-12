@@ -34,7 +34,7 @@ import org.nuxeo.runtime.transaction.TransactionHelper;
  * Handle the asynchronous translation of document fields using document
  * adaptors to make it possible to override text content is to be extracted for
  * each document type.
- * 
+ *
  * The translation process is handled by a command line executor that works out
  * of any transactional context to avoid transaction timeout issues.
  */
@@ -43,6 +43,8 @@ public class TranslationWork extends AbstractWork {
     private static final Log log = LogFactory.getLog(TranslationWork.class);
 
     protected static final String EVENT_TRANSLATION_COMPLETE = "TranslationComplete";
+
+    private static final String CATEGORY_TRANSLATION = "Translation";
 
     protected final DocumentLocation docLoc;
 
@@ -61,6 +63,11 @@ public class TranslationWork extends AbstractWork {
     public String getTitle() {
         return String.format("Translation for: %s:%s", docLoc.getServerName(),
                 docLoc.getDocRef());
+    }
+
+    @Override
+    public String getCategory() {
+        return CATEGORY_TRANSLATION;
     }
 
     @Override
@@ -103,7 +110,7 @@ public class TranslationWork extends AbstractWork {
                 }
             }
         } finally {
-            FileUtils.deleteQuietly(tempFolder);
+            //FileUtils.deleteQuietly(tempFolder);
         }
 
         // Save the results back on the document in a new, short-lived
