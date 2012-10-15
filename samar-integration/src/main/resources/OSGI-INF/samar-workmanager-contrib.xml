@@ -3,8 +3,9 @@
 
   <extension target="org.nuxeo.ecm.core.work.service" point="queues">
     <queue id="Translation">
-      <!-- Each translate process needs to load up to 7GB of language models in memory. -->
-      <maxThreads>2</maxThreads>
+      <!-- Warning: each translate process needs to load up to 7GB of
+           language models in memory. -->
+      <maxThreads>1</maxThreads>
       <category>Translation</category>
     </queue>
   </extension>

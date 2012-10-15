@@ -94,10 +94,19 @@
       <groupId>org.nuxeo.ecm.platform</groupId>
       <artifactId>nuxeo-platform-webapp-base</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.nuxeo.common</groupId>
+      <artifactId>nuxeo-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.nuxeo</groupId>
+      <artifactId>nuxeo-vocapia</artifactId>
+      <version>${nuxeo.addons.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
-     <plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
