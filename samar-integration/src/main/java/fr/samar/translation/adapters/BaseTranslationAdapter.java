@@ -1,4 +1,4 @@
-package fr.samar.translation;
+package fr.samar.translation.adapters;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,6 +11,9 @@ import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.model.PropertyException;
+
+import fr.samar.translation.TranslationAdapter;
+import fr.samar.translation.TranslationTask;
 
 public class BaseTranslationAdapter implements TranslationAdapter {
 
@@ -58,7 +61,19 @@ public class BaseTranslationAdapter implements TranslationAdapter {
             try {
                 String sourceText = (String) doc.getPropertyValue((String) fieldToTranslate.get(PROPERTY_PATH));
                 fieldSpec.put(TEXT, sourceText);
-                task.addFieldToTranslate(fieldSpec);
+                if (log.isDebugEnabled()) {
+                    if (sourceText != null && !sourceText.isEmpty()) {
+                        String snippet = sourceText.substring(0,
+                                Math.min(40, sourceText.length()));
+                        log.debug("Adding field '"
+                                + fieldSpec.get(PROPERTY_PATH)
+                                + "' with text: " + snippet + "...");
+                        task.addFieldToTranslate(fieldSpec);
+                    } else {
+                        log.debug("Skipping empty field '"
+                                + fieldSpec.get(PROPERTY_PATH) + "'");
+                    }
+                }
             } catch (PropertyException e) {
                 // missing property on this document type: ignore
                 continue;

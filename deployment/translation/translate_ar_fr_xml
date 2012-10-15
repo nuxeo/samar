@@ -11,8 +11,6 @@ set -e
 
 input_file=$1
 filename=`echo $input_file | sed 's/.xml//' `
-folder=`dirname $input_file`
-cd $folder
 
 if [[ ${#@} != 1 ]]
 then

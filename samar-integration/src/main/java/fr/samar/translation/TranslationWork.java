@@ -2,6 +2,7 @@ package fr.samar.translation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandAvailability;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
+import org.nuxeo.ecm.platform.commandline.executor.api.ExecResult;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
@@ -125,17 +127,28 @@ public class TranslationWork extends AbstractWork {
     protected TranslationTask makeTranslationTask() throws ClientException {
         final TranslationTask[] results = new TranslationTask[] { null };
         final DocumentRef docRef = docLoc.getDocRef();
-        String repositoryName = docLoc.getServerName();
+        final String repositoryName = docLoc.getServerName();
         new UnrestrictedSessionRunner(repositoryName) {
             @Override
             public void run() throws ClientException {
                 if (session.exists(docRef)) {
                     DocumentModel doc = session.getDocument(docRef);
+                    log.debug(String.format(
+                            "Collecting fields to translate for document '%s' on repository '%s'",
+                            doc.getTitle(), repositoryName));
                     TranslationAdapter adapter = doc.getAdapter(
                             TranslationAdapter.class, true);
                     if (adapter != null) {
                         results[0] = adapter.getTranslationTask();
+                    } else {
+                        log.warn(String.format(
+                                "Could not find translation adapter for '%s' with type '%s'.",
+                                doc.getTitle(), doc.getType()));
                     }
+                } else {
+                    log.warn(String.format(
+                            "Could not find document '%s' on repository '%s'",
+                            docRef, repositoryName));
                 }
             }
         }.runUnrestricted();
@@ -155,6 +168,10 @@ public class TranslationWork extends AbstractWork {
         String baseName = fieldName.replaceAll(":", "__");
         File sourceTextFile = new File(tempFolder, String.format("%s.%s",
                 baseName, format));
+        if (isFormatted) {
+            // ensure that the input is a proper XML node by adding wrapper tag
+            text = "<body>\n" + text + "\n</body>";
+        }
         FileUtils.writeStringToFile(sourceTextFile, text, "UTF-8");
 
         String commandName = String.format("translate_%s_%s_%s",
@@ -172,10 +189,29 @@ public class TranslationWork extends AbstractWork {
         }
         CmdParameters params = new CmdParameters();
         params.addNamedParameter("inputFile", sourceTextFile);
-        executorService.execCommand(commandName, params);
+        ExecResult execResult = executorService.execCommand(commandName, params);
+        String textSample = text.substring(0, Math.min(40, text.length())) + "...";
+        if (!execResult.isSuccessful()) {
+            throw new RuntimeException(String.format(
+                    "Error while executing '%s' on '%s':\n%s", commandName,
+                    textSample, StringUtils.join(execResult.getOutput(), "\n")));
+        } else {
+            if (log.isTraceEnabled() && execResult != null) {
+                log.trace(String.format("Output for command '%s' on '%s':\n%s",
+                        commandName, textSample,
+                        StringUtils.join(execResult.getOutput(), "\n")));
+            }
+        }
         File targetTextFile = new File(tempFolder, String.format("%s.%s.%s",
                 baseName, targetLanguage, format));
-        return FileUtils.readFileToString(targetTextFile, "UTF-8");
+        String output = FileUtils.readFileToString(targetTextFile, "UTF-8");
+        if (isFormatted) {
+            // remove the wrapper tag
+            String[] lines = output.split("\n");
+            lines = Arrays.copyOfRange(lines, 1, lines.length - 1);
+            output = StringUtils.join(lines, "\n");
+        }
+        return output;
     }
 
     protected void saveResults(final TranslationTask task)
@@ -187,6 +223,9 @@ public class TranslationWork extends AbstractWork {
             public void run() throws ClientException {
                 if (session.exists(docRef)) {
                     DocumentModel doc = session.getDocument(docRef);
+                    log.debug(String.format(
+                            "Saving translation results for document '%s' on repository '%s'",
+                            doc.getTitle(), repositoryName));
                     TranslationAdapter adapter = doc.getAdapter(
                             TranslationAdapter.class, true);
                     adapter.setTranslationResults(task);
@@ -210,6 +249,10 @@ public class TranslationWork extends AbstractWork {
                     Event event = ctx.newEvent(EVENT_TRANSLATION_COMPLETE);
                     EventService eventService = Framework.getLocalService(EventService.class);
                     eventService.fireEvent(event);
+                } else {
+                    log.warn(String.format(
+                            "Document '%s' on repository '%s' seems to have been deleted while translating.",
+                            docRef, repositoryName));
                 }
             }
         }.runUnrestricted();
