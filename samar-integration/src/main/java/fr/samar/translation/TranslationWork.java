@@ -112,7 +112,7 @@ public class TranslationWork extends AbstractWork {
                 }
             }
         } finally {
-            //FileUtils.deleteQuietly(tempFolder);
+            FileUtils.deleteQuietly(tempFolder);
         }
 
         // Save the results back on the document in a new, short-lived
