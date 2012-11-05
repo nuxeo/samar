@@ -59,16 +59,17 @@ public class SamarTranslationAdapter extends BaseTranslationAdapter implements
                             log.debug("Adding field '"
                                     + RELATEDTEXT_TRANSCRIPTION
                                     + "' with text: " + snippet + "...");
-                            task.addFieldToTranslate(field);
                         } else {
                             log.debug("Skipping empty field '"
                                     + RELATEDTEXT_TRANSCRIPTION + "'");
                         }
                     }
+                    task.addFieldToTranslate(field);
                     break;
                 }
             }
         }
         return task;
     }
+
 }

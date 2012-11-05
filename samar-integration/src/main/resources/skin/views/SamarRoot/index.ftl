@@ -33,13 +33,22 @@
 <div class="results">
 
 	<#list This.results as result>
-	<div class="resultDoc ${result.doc.type} ${result.doc.id}
-	  lang-${result.doc.dublincore.language}">
+	<div class="resultDoc ${result.doc.type} ${result.doc.id}">
 	  <#if result.doc.type == 'NewsML'>
-      <h2 class="headline" dir="auto"><i class="icon-doc-text"></i> ${result.doc.title}</h2>
-	  <div class="ellipsis newsMLContent">
+      <h2 class="headline lang-${result.doc.dublincore.language}"><i class="icon-doc-text"></i> ${result.doc.title}</h2>
+	  <div class="ellipsis newsMLContent lang-${result.doc.dublincore.language}">
 	    ${result.doc.note.note}
 	  </div>
+	  <div class="translations">
+	  <#list result.translation.getTranslatedFields('note:note')?values as translation>
+	    <#if translation['text']?has_content>
+	    <h3>${Context.getMessage('heading.translation.' + translation['language'])}</h3>
+	    <div class="ellipsis newsMLContent lang-${translation['language']}">
+	      ${translation['text']}
+	    </div>
+	    </#if>
+	  </#list>
+	  </p>
 	  <#elseif result.doc.type == 'Video'>
       <h2 class="headline" dir="auto"><i class="icon-video"></i> ${result.doc.title}</h2>
 	  <#if result.isVideoPlayerReady()>
@@ -47,18 +56,31 @@
       <!-- HTML5 player -->
       <video class="video-js" width="320" height="180" controls="controls" preload="auto"
          poster="${result.videoPosterLink}">
-          <source src="${result.videoWebmLink}" type='video/webm' />
+          <#if result.videoWebmLink?has_content>
+            <source src="${result.videoWebmLink}" type='video/webm' />
+          </#if>
+          <#if result.videoMP4Link?has_content>
+            <source src="${result.videoMP4Link}" type='video/mp4' />
+          </#if>
       </video>
       </div>
       </#if>
 	  <#if result.hasSpeechTranscription()>
-	  <p class="videoTranscription">
+	  <p class="videoTranscription lang-${result.doc.dublincore.language}">
 	    <#list result.doc.transcription.sections as section>
 	      <span class="transcriptionSection"
 	       timecode=${section.timecode_start}>${section.text}</span>
 	    </#list>
 	  </p>
 	  </#if>
+	  <div class="translations">
+	    <#list result.translation.getTranslatedFields('relatedtext:relatedtextresources_transcription')?values as translation>
+	      <#if translation['text']?has_content>
+	      <h3>${Context.getMessage('heading.translation.' + translation['language'])}</h3>
+	      <p class="lang-${translation['language']}">${translation['text']}</p>
+	      </#if>
+	    </#list>
+	  </p>
 	  </#if>
 	  <div style="clear: both"></div>
       <ul class="entityOccurrences">

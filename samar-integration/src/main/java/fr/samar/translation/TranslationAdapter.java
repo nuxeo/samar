@@ -1,5 +1,7 @@
 package fr.samar.translation;
 
+import java.util.Map;
+
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.model.PropertyException;
 
@@ -23,6 +25,12 @@ public interface TranslationAdapter {
             ClientException;
 
     void setTranslationResults(TranslationTask results)
+            throws PropertyException, ClientException;
+
+    String getTranslatedField(String language, String propertyPath)
+            throws PropertyException, ClientException;
+
+    Map<String, Map<String, Object>> getTranslatedFields(String propertyPath)
             throws PropertyException, ClientException;
 
 }

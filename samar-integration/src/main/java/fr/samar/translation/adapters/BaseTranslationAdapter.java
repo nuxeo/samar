@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,4 +92,37 @@ public class BaseTranslationAdapter implements TranslationAdapter {
                 (Serializable) task.getTranslatedFields());
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public String getTranslatedField(String language, String propertyPath)
+            throws PropertyException, ClientException {
+        if (!doc.hasFacet(HAS_TRANSLATION)) {
+            return null;
+        }
+        List<Map<String, Object>> fields = (List<Map<String, Object>>) doc.getPropertyValue(TRANSLATED_FIELDS);
+        for (Map<String, Object> field : fields) {
+            if (language.equals(field.get(TranslationTask.LANGUAGE))
+                    && propertyPath.equals(field.get(PROPERTY_PATH))) {
+                return (String) field.get(TEXT);
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Map<String, Object>> getTranslatedFields(
+            String propertyPath) throws PropertyException, ClientException {
+        Map<String, Map<String, Object>> translations = new TreeMap<String, Map<String, Object>>();
+        if (!doc.hasFacet(HAS_TRANSLATION)) {
+            return translations;
+        }
+        List<Map<String, Object>> fields = (List<Map<String, Object>>) doc.getPropertyValue(TRANSLATED_FIELDS);
+        for (Map<String, Object> field : fields) {
+            if (propertyPath.equals(field.get(PROPERTY_PATH))) {
+                translations.put((String) field.get(TranslationTask.LANGUAGE),
+                        field);
+            }
+        }
+        return translations;
+    }
 }
