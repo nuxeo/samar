@@ -62,15 +62,17 @@ public class BaseTranslationAdapter implements TranslationAdapter {
             try {
                 String sourceText = (String) doc.getPropertyValue((String) fieldToTranslate.get(PROPERTY_PATH));
                 fieldSpec.put(TEXT, sourceText);
-                if (log.isDebugEnabled()) {
-                    if (sourceText != null && !sourceText.isEmpty()) {
-                        String snippet = sourceText.substring(0,
-                                Math.min(40, sourceText.length()));
+                if (sourceText != null && !sourceText.isEmpty()) {
+                    String snippet = sourceText.substring(0,
+                            Math.min(40, sourceText.length()));
+                    if (log.isDebugEnabled()) {
                         log.debug("Adding field '"
                                 + fieldSpec.get(PROPERTY_PATH)
                                 + "' with text: " + snippet + "...");
-                        task.addFieldToTranslate(fieldSpec);
-                    } else {
+                    }
+                    task.addFieldToTranslate(fieldSpec);
+                } else {
+                    if (log.isDebugEnabled()) {
                         log.debug("Skipping empty field '"
                                 + fieldSpec.get(PROPERTY_PATH) + "'");
                     }
