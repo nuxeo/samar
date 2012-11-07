@@ -3,6 +3,7 @@ package fr.samar;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.UriInfo;
 
@@ -117,5 +118,15 @@ public class AnnotatedResult {
 
     public TranslationAdapter getTranslation() {
         return translation;
+    }
+
+    public String getTranslatedField(String propertyPath, String language) throws PropertyException, ClientException {
+        Map<String, Map<String, Object>> translations = translation.getTranslatedFields(propertyPath);
+        Map<String, Object> translation = translations.get(language);
+        if (translation == null) {
+            return "";
+        } else {
+            return (String) translation.get(TranslationAdapter.TEXT);
+        }
     }
 }

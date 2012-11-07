@@ -208,8 +208,11 @@ public class TranslationWork extends AbstractWork {
         if (isFormatted) {
             // remove the wrapper tag
             String[] lines = output.split("\n");
-            lines = Arrays.copyOfRange(lines, 1, lines.length - 1);
-            output = StringUtils.join(lines, "\n");
+            if (lines.length >= 3 && lines[0].equals("<body>")
+                    && lines[lines.length - 1].equals("</body>")) {
+                lines = Arrays.copyOfRange(lines, 1, lines.length - 1);
+                output = StringUtils.join(lines, "\n");
+            }
         }
         return output;
     }

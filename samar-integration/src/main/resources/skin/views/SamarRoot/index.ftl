@@ -42,7 +42,8 @@
 	  <div class="translations">
 	  <#list result.translation.getTranslatedFields('note:note')?values as translation>
 	    <#if translation['text']?has_content>
-	    <h3>${Context.getMessage('heading.translation.' + translation['language'])}</h3>
+	    <h3>${Context.getMessage('heading.translation.' + translation['language'])}
+	     - ${result.getTranslatedField('dc:title', translation['language'])}</h3>
 	    <div class="ellipsis newsMLContent lang-${translation['language']}">
 	      ${translation['text']}
 	    </div>
@@ -76,7 +77,8 @@
 	  <div class="translations">
 	    <#list result.translation.getTranslatedFields('relatedtext:relatedtextresources_transcription')?values as translation>
 	      <#if translation['text']?has_content>
-	      <h3>${Context.getMessage('heading.translation.' + translation['language'])}</h3>
+	      <h3>${Context.getMessage('heading.translation.' + translation['language'])}
+	       - ${result.getTranslatedField('dc:title', translation['language'])}</h3>
 	      <p class="lang-${translation['language']}">${translation['text']}</p>
 	      </#if>
 	    </#list>
