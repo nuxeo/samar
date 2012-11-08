@@ -110,7 +110,7 @@ def setconfig(filepath, param, value):
             f.write('%s=%s\n' % (param, value))
 
 
-def check_install_nuxeo():
+def check_install_nuxeo(upgrade=False):
     """Check that Nuxeo is installed from the latest datebased release"""
 
     # Ensure the datebased release repo is configured and up to date
@@ -125,7 +125,9 @@ def check_install_nuxeo():
                     '"deb http://apt.nuxeo.org/ oneiric snapshots"')
         cmd("wget -O- http://apt.nuxeo.org/nuxeo.key "
                     "| apt-key add -")
-    cmd("apt-get update && apt-get upgrade -y")
+    cmd("apt-get update")
+    if upgrade:
+        cmd("apt-get upgrade -y")
 
     # Pre-accept Sun Java license & set Nuxeo options
     debconfselect("sun-java6-jdk", "shared/accepted-sun-dlj-v1-1", "true")
