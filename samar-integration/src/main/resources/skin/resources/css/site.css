@@ -21,7 +21,8 @@ body {
 }
 
 .content {
-	margin: 1em;
+	margin: 1em auto;
+	max-width: 80em;
 }
 
 .hidden {
@@ -31,13 +32,13 @@ body {
 }
 
 .query {
-	margin: 1em 10%;
+	margin: 1em 2em;
 	text-align: center;
 }
 
 .query input.userInput {
 	width: 100%;
-  padding: .2em;
+    padding: .2em;
 	font-size: 180%;
 }
 
@@ -99,23 +100,21 @@ li.tag a.removeEntityLink {
 }
 
 .results {
-	margin: 1em 10%;
+	margin: 1em;
 }
 
 .results .resultDoc {
 	margin-top: 2em;
+	font-size: 90%;
+	color: #555;
 }
 
 .results .newsMLContent {
 	max-height: 180px;
-	font-size: 90%;
-	color: #555;
 }
 
  .results .videoTranscription {
 	max-height: 180px;
-	font-size: 90%;
-	color: #555;
 	overflow-y: auto;
 	padding-left: 1em; 
  }
@@ -130,7 +129,6 @@ li.tag a.removeEntityLink {
 }
 
 .results .videoTranscription span:hover {
-	color: black;
     background-color: #ffa810;
 }
 
