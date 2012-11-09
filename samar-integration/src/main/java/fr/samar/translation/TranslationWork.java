@@ -30,7 +30,6 @@ import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorServic
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandNotAvailable;
 import org.nuxeo.ecm.platform.commandline.executor.api.ExecResult;
 import org.nuxeo.runtime.api.Framework;
-import org.nuxeo.runtime.transaction.TransactionHelper;
 
 /**
  * Handle the asynchronous translation of document fields using document
@@ -83,9 +82,7 @@ public class TranslationWork extends AbstractWork {
 
         // Release the current transaction as the following calls will be very
         // long and won't need access to any persistent transactional resources
-        if (isTransactional()) {
-            TransactionHelper.commitOrRollbackTransaction();
-        }
+        commitOrRollbackTransaction();
         File tempFolder = File.createTempFile("nuxeo_translation_", "_tmp");
         tempFolder.delete();
         tempFolder.mkdir();
@@ -117,9 +114,7 @@ public class TranslationWork extends AbstractWork {
 
         // Save the results back on the document in a new, short-lived
         // transaction
-        if (isTransactional()) {
-            TransactionHelper.startTransaction();
-        }
+        startTransaction();
         setStatus("saving_results");
         saveResults(task);
     }
