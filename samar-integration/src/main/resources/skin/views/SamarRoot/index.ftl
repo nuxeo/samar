@@ -54,7 +54,7 @@
 	  <#if result.isVideoPlayerReady()>
       <div class="video-js-box">
       <!-- HTML5 player -->
-      <video class="video-js" width="320" height="180" controls="controls" preload="auto"
+      <video class="video-js" width="320" height="180" controls="controls" preload="none"
          poster="${result.videoPosterLink}">
           <#if result.videoWebmLink?has_content>
             <source src="${result.videoWebmLink}" type='video/webm' />
@@ -123,10 +123,27 @@ jQuery(document).ready(function() {
     var videoJsElement = jQuery(this).find(".video-js");
     if (videoJsElement.length > 0 && videoJsElement.get(0) != 'undefined') {
       var video = videoJsElement.get(0);
+      jQuery(video).bind('canplay', function() {
+          if (video.seekToTimeWhenReady != undefined) {
+              video.currentTime = video.seekToTimeWhenReady;
+              video.seekToTimeWhenReady = undefined;
+              video.play();
+          }
+      });
       jQuery(this).find('.transcriptionSection').css('cursor', 'pointer');
       jQuery(this).find('.transcriptionSection').click(function() {
-        video.currentTime = parseFloat(jQuery(this).attr('timecode'));
-        video.play();
+        var timecode = parseFloat(jQuery(this).attr('timecode'));
+        if (video.buffered.length == 0) {
+             // video has not yet been downloaded by the client: store
+             // the required seek timecode for later useage in the
+             // 'canplay' event handler
+             video.seekToTimeWhenReady = timecode;
+             // trigger the download of the video
+             video.load();
+        } else {
+            video.currentTime = timecode;
+            video.play();
+        }
         return false;
       });
     }

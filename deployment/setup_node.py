@@ -150,7 +150,7 @@ def setup_nuxeo(marketplace_package=None):
     # Check that the repository config has the entity index (ugly patching
     # function, should use an xml parser instead or an incremental extension
     # point instead
-    repo_conf = NUXEO_HOME + '/nxserver/config/default-repository-config.xml'
+    repo_conf = NUXEO_HOME + '/templates/common-base/nxserver/config/default-repository-config.xml.nxftl'
     index_field = '<field>entity:altnames</field>'
 
     with open(repo_conf, 'rb') as f:
@@ -171,6 +171,10 @@ def setup_nuxeo(marketplace_package=None):
 
     # Skip wizard
     setconfig(NUXEO_CONF, 'nuxeo.wizard.done', 'true')
+
+    # Need many concurrent core session to play HTML5 video in samar
+    # frontoffice
+    setconfig(NUXEO_CONF, 'nuxeo.vcs.max-pool-size', '100')
 
     # Define an environment variable to locate the nuxeo configuration
     os.environ['NUXEO_CONF'] = NUXEO_CONF
