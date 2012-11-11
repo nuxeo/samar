@@ -50,7 +50,7 @@
 	  </#list>
 	  </p>
 	  <#elseif result.doc.type == 'Video'>
-      <h2 class="headline" dir="auto"><i class="icon-video"></i> ${result.doc.title}</h2>
+      <h2 class="headline lang-${result.doc.dublincore.language}"><i class="icon-video"></i> ${result.doc.title}</h2>
 	  <#if result.isVideoPlayerReady()>
       <div class="video-js-box">
       <!-- HTML5 player -->
