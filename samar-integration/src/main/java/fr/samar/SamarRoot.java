@@ -71,10 +71,10 @@ public class SamarRoot extends ModuleRoot {
             sb.append(String.format("ecm:fulltext LIKE '%s'", sanitizedInput));
             sb.append(" AND ");
         }
-        // for (String validEntityId : validEntityIds) {
-        // sb.append(String.format("semantics:entities = '%s'", validEntityId));
-        // sb.append(" AND ");
-        // }
+        for (String validEntityId : validEntityIds) {
+            sb.append(String.format("semantics:entities = '%s'", validEntityId));
+            sb.append(" AND ");
+        }
         sb.append("ecm:primaryType IN ('NewsML', 'Video')");
         sb.append(" AND ");
         sb.append("ecm:mixinType != 'HiddenInNavigation'");
