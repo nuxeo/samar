@@ -123,7 +123,8 @@ jQuery(document).ready(function() {
     var videoJsElement = jQuery(this).find(".video-js");
     if (videoJsElement.length > 0 && videoJsElement.get(0) != 'undefined') {
       var video = videoJsElement.get(0);
-      jQuery(video).bind('canplay', function() {
+      jQuery(video).on('canplay', function(e) {
+          console.log("canplay fired");
           if (video.seekToTimeWhenReady != undefined) {
               video.currentTime = video.seekToTimeWhenReady;
               video.seekToTimeWhenReady = undefined;
@@ -139,7 +140,8 @@ jQuery(document).ready(function() {
              // 'canplay' event handler
              video.seekToTimeWhenReady = timecode;
              // trigger the download of the video
-             video.load();
+             video.play();
+             video.pause();
         } else {
             video.currentTime = timecode;
             video.play();
