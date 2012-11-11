@@ -2,6 +2,7 @@
 package fr.samar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.nuxeo.common.utils.StringUtils;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -47,8 +49,10 @@ public class SamarRoot extends ModuleRoot {
 
     public SamarRoot(@QueryParam("q")
     String userInput, @QueryParam("entity")
-    List<String> entityIds, @Context
-    HttpServletRequest request, @Context UriInfo uriInfo) throws ClientException {
+    List<String> entityIds, @QueryParam("type")
+    List<String> types, @Context
+    HttpServletRequest request, @Context
+    UriInfo uriInfo) throws ClientException {
         long start = System.currentTimeMillis();
         LocalEntityService entityService = Framework.getLocalService(LocalEntityService.class);
         session = SessionFactory.getSession(request);
@@ -63,8 +67,12 @@ public class SamarRoot extends ModuleRoot {
         if (userInput == null) {
             userInput = "";
         }
+        if (types.isEmpty()) {
+            types = Arrays.asList("NewsML", "Video");
+        }
         this.userInput = userInput;
         String sanitizedInput = NXQLQueryBuilder.sanitizeFulltextInput(userInput);
+        // TODO: escape special chars in type and entitiy ids inputs as well
         StringBuffer sb = new StringBuffer();
         sb.append("SELECT * FROM Document WHERE ");
         if (!sanitizedInput.isEmpty()) {
@@ -75,7 +83,8 @@ public class SamarRoot extends ModuleRoot {
             sb.append(String.format("semantics:entities = '%s'", validEntityId));
             sb.append(" AND ");
         }
-        sb.append("ecm:primaryType IN ('NewsML', 'Video')");
+        sb.append(String.format("ecm:primaryType IN ('%s')",
+                StringUtils.join(types, "', '")));
         sb.append(" AND ");
         sb.append("ecm:mixinType != 'HiddenInNavigation'");
         sb.append(" AND ");
