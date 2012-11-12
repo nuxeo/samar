@@ -139,7 +139,7 @@ public class SamarRoot extends ModuleRoot {
                 sb.append(String.format("ecm:fulltext.dc:title LIKE '%s*'",
                         sanitizedTerm));
                 sb.append(" OR ");
-                sb.append(String.format("entity:altnames LIKE '%s%%'",
+                sb.append(String.format("entity:altnames/* ILIKE '%s%%'",
                         sanitizedTerm));
                 sb.append(") AND ");
                 sb.append("ecm:mixinType != 'HiddenInNavigation'");
