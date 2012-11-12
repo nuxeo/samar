@@ -99,6 +99,7 @@
 <script type="text/javascript">
 <!--
 jQuery(document).ready(function() {
+
   jQuery("#queryForm .userInput").autocomplete({
     source: "samar/suggest",
     minLength: 2,
@@ -110,6 +111,7 @@ jQuery(document).ready(function() {
        }
     }
   });
+
   jQuery(".removeEntityLink").click(function () {
     var entityId = jQuery(this).attr('entity');
     jQuery('#queryForm input[value=' + entityId +']').remove();
@@ -157,6 +159,7 @@ jQuery(document).ready(function() {
   jQuery(document).ready(function() {
 	jQuery(".ellipsis").dotdotdot();
   });
+
   document.getElementById("q").focus();
 });
 -->
