@@ -9,7 +9,7 @@
 	  name="q" value="${This.userInput}" dir="auto" />
 	  
 	<#list This.entities as entity>
-	<input type="hidden" name="entity" value="${entity.id}" />
+	  <#include "/entityFormSelection.ftl">
 	</#list>
 	
 	<input class="hidden" type="submit" />
@@ -17,14 +17,7 @@
 
 	<ul class="entityFacets">
 	<#list This.entities as entity>
-	  <li class="${entity.entity.summary?has_content?string('entityFacet tag', 'tag')}">${entity.title}
-	   <a href="#"  class="removeEntityLink" entity="${entity.id}">x</a></li>
-	  <#if entity.entity.summary?has_content>
-	  <div class="entityTooltip">
-        <h3 dir="auto">${entity.title}</h3>
-        <p class="ellipsis">${entity.entity.summary}</p>
-	  </div>
-	  </#if>
+	  <#include "/entityFacet.ftl">
 	</#list>
 	</ul>
 
@@ -106,6 +99,17 @@
 <script type="text/javascript">
 <!--
 jQuery(document).ready(function() {
+  jQuery("#queryForm .userInput").autocomplete({
+    source: "samar/suggest",
+    minLength: 2,
+    select: function(event, ui) {
+       if (ui.item) {
+         jQuery('#queryForm').append(ui.item.entityFormSelectionHTML);
+         jQuery('#queryForm .userInput').attr('value', '');
+         jQuery('#queryForm').submit();
+       }
+    }
+  });
   jQuery(".removeEntityLink").click(function () {
     var entityId = jQuery(this).attr('entity');
     jQuery('#queryForm input[value=' + entityId +']').remove();

@@ -51,6 +51,10 @@ body {
 	height: 3em;
 }
 
+.ui-autocomplete-loading {
+    background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat;
+}
+
 .entityTooltip {
   /* Hidden by default, jquery tools tooltip plugin will trigger the display
        of the element */

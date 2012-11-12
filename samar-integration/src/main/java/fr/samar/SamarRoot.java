@@ -1,9 +1,11 @@
-
 package fr.samar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -14,6 +16,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.nuxeo.common.utils.StringUtils;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -37,6 +42,8 @@ import org.nuxeo.runtime.api.Framework;
 @WebObject(type = "SamarRoot")
 public class SamarRoot extends ModuleRoot {
 
+    ObjectMapper mapper = new ObjectMapper();
+
     String userInput;
 
     CoreSession session;
@@ -47,6 +54,8 @@ public class SamarRoot extends ModuleRoot {
 
     protected long durationMilliseconds;
 
+    protected LocalEntityService entityService;
+
     public SamarRoot(@QueryParam("q")
     String userInput, @QueryParam("entity")
     List<String> entityIds, @QueryParam("type")
@@ -54,7 +63,7 @@ public class SamarRoot extends ModuleRoot {
     HttpServletRequest request, @Context
     UriInfo uriInfo) throws ClientException {
         long start = System.currentTimeMillis();
-        LocalEntityService entityService = Framework.getLocalService(LocalEntityService.class);
+        entityService = Framework.getLocalService(LocalEntityService.class);
         session = SessionFactory.getSession(request);
         List<String> validEntityIds = new ArrayList<String>();
         for (String entityId : entityIds) {
@@ -113,6 +122,52 @@ public class SamarRoot extends ModuleRoot {
     @GET
     public Object index() {
         return getView("index");
+    }
+
+    @GET
+    @Path("/suggest")
+    @Produces("application/json")
+    public String suggestConcept(@QueryParam("term")
+    String term) throws JsonGenerationException, JsonMappingException,
+            IOException, ClientException {
+        List<Map<String, String>> suggestions = new ArrayList<Map<String, String>>();
+        if (term != null && !term.isEmpty()) {
+            String sanitizedTerm = NXQLQueryBuilder.sanitizeFulltextInput(term);
+            if (!sanitizedTerm.isEmpty()) {
+                StringBuffer sb = new StringBuffer();
+                sb.append("SELECT * FROM Entity WHERE (");
+                sb.append(String.format("ecm:fulltext.dc:title LIKE '%s*'",
+                        sanitizedTerm));
+                sb.append(" OR ");
+                sb.append(String.format("entity:altnames LIKE '%s%%'",
+                        sanitizedTerm));
+                sb.append(") AND ");
+                sb.append("ecm:mixinType != 'HiddenInNavigation'");
+                sb.append(" AND ");
+                sb.append("ecm:isCheckedInVersion = 0");
+                sb.append(" AND ");
+                sb.append("ecm:currentLifeCycleState != 'deleted'");
+                sb.append(" LIMIT 10");
+                String query = sb.toString();
+                DocumentModelList entities = session.query(query, 10);
+                for (DocumentModel entity : entities) {
+                    Map<String, String> suggestion = new LinkedHashMap<String, String>();
+                    suggestion.put("id", entity.getId());
+                    // TODO: i18n instead
+                    suggestion.put("label", entity.getTitle());
+                    suggestion.put("value", entity.getTitle());
+                    suggestion.put("summary", entity.getTitle());
+                    suggestion.put(
+                            "entityFormSelectionHTML",
+                            getTemplate("entityFormSelection.ftl").arg("entity", entity).render());
+                    suggestion.put(
+                            "entityFacetHTML",
+                            getTemplate("entityFacet.ftl").arg("entity", entity).render());
+                    suggestions.add(suggestion);
+                }
+            }
+        }
+        return mapper.writeValueAsString(suggestions);
     }
 
     public String getUserInput() {
