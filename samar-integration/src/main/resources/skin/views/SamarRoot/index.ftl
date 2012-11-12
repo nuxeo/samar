@@ -94,7 +94,8 @@ jQuery(document).ready(function() {
   jQuery(".translations").accordion({
       icons: icons,
       collapsible: true,
-      active: false
+      active: false,
+      heightStyle: "content"
   });
   jQuery("#queryForm .userInput").autocomplete({
     source: "samar/suggest",
