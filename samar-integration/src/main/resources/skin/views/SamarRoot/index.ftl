@@ -7,11 +7,11 @@
 	<form id="queryForm" method="GET">
 	<input class="userInput" type="text" id="q"
 	  name="q" value="${This.userInput}" dir="auto" />
-	  
+
 	<#list This.entities as entity>
 	  <#include "/entityFormSelection.ftl">
 	</#list>
-	
+
 	<input class="hidden" type="submit" />
 	</form>
 
@@ -25,81 +25,77 @@
 
 <div class="results">
 
-	<#list This.results as result>
-	<div class="resultDoc ${result.doc.type} ${result.doc.id}">
-	  <#if result.doc.type == 'NewsML'>
+  <#list This.results as result>
+  <div class="resultDoc ${result.doc.type} ${result.doc.id}">
+    <#if result.doc.type == 'NewsML'>
       <h2 class="headline lang-${result.doc.dublincore.language}"><i class="icon-doc-text"></i> ${result.doc.title}</h2>
-	  <div class="ellipsis newsMLContent lang-${result.doc.dublincore.language}">
-	    ${result.doc.note.note}
-	  </div>
-	  <div class="translations">
-	  <#list result.translation.getTranslatedFields('note:note')?values as translation>
-	    <#if translation['text']?has_content>
-	    <h3>${result.getTranslatedField('dc:title', translation['language'])}</h3>
-	    <div class="ellipsis newsMLContent lang-${translation['language']}">
-	      ${translation['text']}
-	    </div>
-	    </#if>
-	  </#list>
-	  </p>
-	  <#elseif result.doc.type == 'Video'>
-      <h2 class="headline lang-${result.doc.dublincore.language}"><i class="icon-video"></i> ${result.doc.title}</h2>
-	  <#if result.isVideoPlayerReady()>
-      <div class="video-js-box">
-      <!-- HTML5 player -->
-      <video class="video-js" width="320" height="180" controls="controls" preload="none"
-         poster="${result.videoPosterLink}">
-          <#if result.videoWebmLink?has_content>
-            <source src="${result.videoWebmLink}" type='video/webm' />
-          </#if>
-          <#if result.videoMP4Link?has_content>
-            <source src="${result.videoMP4Link}" type='video/mp4' />
-          </#if>
-      </video>
+      <div class="ellipsis newsMLContent lang-${result.doc.dublincore.language}">
+        ${result.doc.note.note}
       </div>
+      <#include "entityOccurrence.ftl">
+      <div class="translations">
+        <#list result.translation.getTranslatedFields('note:note')?values as translation>
+        <#if translation['text']?has_content>
+        <h3>${result.getTranslatedField('dc:title', translation['language'])}</h3>
+        <div class="ellipsis newsMLContent lang-${translation['language']}">
+          ${translation['text']}
+        </div>
+        </#if>
+        </#list>
+      </div>
+
+    <#elseif result.doc.type == 'Video'>
+      <h2 class="headline lang-${result.doc.dublincore.language}"><i class="icon-video"></i> ${result.doc.title}</h2>
+      <#if result.isVideoPlayerReady()>
+        <div class="video-js-box">
+          <!-- HTML5 player -->
+          <video class="video-js" width="320" height="180" controls="controls" preload="none"
+              poster="${result.videoPosterLink}">
+            <#if result.videoWebmLink?has_content><source src="${result.videoWebmLink}" type='video/webm' /></#if>
+            <#if result.videoMP4Link?has_content><source src="${result.videoMP4Link}" type='video/mp4' /></#if>
+          </video>
+        </div>
       </#if>
-	  <#if result.hasSpeechTranscription()>
-	  <p class="videoTranscription lang-${result.doc.dublincore.language}">
-	    <#list result.doc.transcription.sections as section>
-	      <span class="transcriptionSection"
-	       timecode=${section.timecode_start}>${section.text}</span>
-	    </#list>
-	  </p>
-	  </#if>
-	  <div class="translations">
-	    <#list result.translation.getTranslatedFields('relatedtext:relatedtextresources_transcription')?values as translation>
-	      <#if translation['text']?has_content>
-	      <h3>${result.getTranslatedField('dc:title', translation['language'])}</h3>
-	      <p class="lang-${translation['language']}">${translation['text']}</p>
-	      </#if>
-	    </#list>
-	  </p>
-	  </#if>
-	  <div style="clear: both"></div>
-      <ul class="entityOccurrences">
-      <#list result.occurrences as occurrence>
-	     <li class="${occurrence.targetEntity.entity.summary?has_content?string('entityOccurrence tag', 'tag')}">
-	     <a href="${This.currentQueryUrl}&entity=${occurrence.targetEntity.id}">${occurrence.targetEntity.title}</a></li>
- 	     <#if occurrence.targetEntity.entity.summary?has_content>
- 	     <div class="entityTooltip">
- 	       <h3 dir="auto">${occurrence.targetEntity.title}</h3>
- 	       <p class="ellipsis">${occurrence.targetEntity.entity.summary}</p>
- 	     </div>  
- 	     </#if>
-	  </#list>
-	  </ul>
-	  </div>
-	</div>
-	</#list>
-	
-	<p class="duration">${This.duration}s</p>
+      <#if result.hasSpeechTranscription()>
+        <p class="videoTranscription lang-${result.doc.dublincore.language}">
+          <#list result.doc.transcription.sections as section>
+            <span class="transcriptionSection" timecode=${section.timecode_start}>${section.text}</span>
+          </#list>
+        </p>
+      </#if>
+     <#include "entityOccurrence.ftl">
+     <div style="clear: both"></div>
+
+     <div class="translations">
+       <#list result.translation.getTranslatedFields('relatedtext:relatedtextresources_transcription')?values as translation>
+       <#if translation['text']?has_content>
+         <h3>${result.getTranslatedField('dc:title', translation['language'])}</h3>
+         <p class="lang-${translation['language']}">${translation['text']}</p>
+       </#if>
+       </#list>
+     </div>
+
+     </#if>
+   </div>
+   <div style="clear: both"></div>
+</#list>
+
+<p class="duration">${This.duration}s</p>
 
 </div>
 
 <script type="text/javascript">
 <!--
 jQuery(document).ready(function() {
-
+  var icons = {
+      header: "ui-icon-circle-arrow-e",
+      activeHeader: "ui-icon-circle-arrow-s"
+  };
+  jQuery(".translations").accordion({
+      icons: icons,
+      collapsible: true,
+      active: false
+  });
   jQuery("#queryForm .userInput").autocomplete({
     source: "samar/suggest",
     minLength: 2,
