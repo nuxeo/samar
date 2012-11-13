@@ -46,9 +46,20 @@ body {
   border-color: orange;
 }
 
-.query ul.entityFacets {
+.query ul.entityFacets, ul.entityOccurrences {
 	list-style-type: none;
 	height: 3em;
+	padding: 0;
+}
+
+.query ul.entityFacets {
+	text-align: center;
+	margin: .5em 0 0 0;
+}
+
+ul.entityOccurrences {
+	text-align: right;
+	margin: 1.5em 0;
 }
 
 .ui-autocomplete-loading {
@@ -71,12 +82,6 @@ body {
   max-height: 300px;
 	font-size: 90%;
 	color: #555;
-}
-
-ul.entityOccurrences {
-	text-align: right;
-  list-style-type: none;
-	height: 3em;
 }
 
 li.tag {
@@ -103,6 +108,10 @@ li.tag a.removeEntityLink {
   padding: 0 0 .1em .4em;
 }
 
+li.tag topic {
+  background-color: #936533;
+}
+
 .results {
 	margin: 1em;
 }
@@ -114,7 +123,8 @@ li.tag a.removeEntityLink {
 }
 
 .results .newsMLContent {
-	max-height: 180px;
+	max-height: 200px;
+	overflow-y: auto;
 }
 
  .results .videoTranscription {
@@ -123,13 +133,8 @@ li.tag a.removeEntityLink {
 	padding-left: 1em; 
  }
 
-.results .lang-ar {
+.lang-ar {
 	direction: rtl;
-}
-
-.results .lang-ar .entityTooltip p {
-	/* Summaries only in English for now */
-	direction: ltr;
 }
 
 .results .videoTranscription span:hover {
@@ -141,7 +146,8 @@ li.tag a.removeEntityLink {
 }
 
 .results h2 {
-	font-size: 130%;
+	margin-top: 2.5em;
+	font-size: 200%;
 }
 
 .results .duration {
