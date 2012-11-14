@@ -333,16 +333,19 @@ if __name__ == '__main__':
     controller.put(join(DEPLOYMENT_FOLDER, 'stanbol_init.sh'),
                    WORKING_DIR + 'stanbol_init.sh')
 
-    # Send the credentials for downloading the translation model directly from
-    # the FTP server
+    # Send the credentials and scripts for downloading the translation model
+    # directly from the FTP server
     for filename in [
         'translation.ini',
         'moses.tuned.ar_fr.ini',
+        'moses.tuned.ar_en.ini',
         'translate_ar_fr_xml',
-        'translate_ar_fr_txt']:
+        'translate_ar_en_xml',
+        'translate_ar_fr_txt',
+        'translate_ar_en_txt',
+    ]:
         controller.put(join(DEPLOYMENT_FOLDER, 'translation', filename),
                    WORKING_DIR + filename)
-
 
     # Setup the node by running a script
     arguments = STANBOL_LAUNCHER_FILE + " " + SAMAR_PACKAGE_FILE
