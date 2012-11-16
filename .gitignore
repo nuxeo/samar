@@ -16,3 +16,5 @@ deployment/stanbol_env.sh
 deployment/samar.properties
 deployment/limsi_credentials.ini
 deployment/translation.ini
+pojo-bin
+seam-bin
