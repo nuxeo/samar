@@ -133,14 +133,15 @@ public class SamarRoot extends ModuleRoot {
         List<Map<String, String>> suggestions = new ArrayList<Map<String, String>>();
         if (term != null && !term.isEmpty()) {
             String sanitizedTerm = NXQLQueryBuilder.sanitizeFulltextInput(term);
+            String normalizedName = entityService.normalizeName(sanitizedTerm);
             if (!sanitizedTerm.isEmpty()) {
                 StringBuffer sb = new StringBuffer();
                 sb.append("SELECT * FROM Entity WHERE (");
                 sb.append(String.format("ecm:fulltext.dc:title LIKE '%s*'",
-                        sanitizedTerm));
+                        normalizedName));
                 sb.append(" OR ");
-                sb.append(String.format("entity:altnames/* ILIKE '%s%%'",
-                        sanitizedTerm));
+                sb.append(String.format("entity:altnames/* LIKE '%s%%'",
+                        normalizedName));
                 sb.append(") AND ");
                 sb.append("ecm:mixinType != 'HiddenInNavigation'");
                 sb.append(" AND ");
@@ -159,7 +160,8 @@ public class SamarRoot extends ModuleRoot {
                     suggestion.put("summary", entity.getTitle());
                     suggestion.put(
                             "entityFormSelectionHTML",
-                            getTemplate("entityFormSelection.ftl").arg("entity", entity).render());
+                            getTemplate("entityFormSelection.ftl").arg(
+                                    "entity", entity).render());
                     suggestion.put(
                             "entityFacetHTML",
                             getTemplate("entityFacet.ftl").arg("entity", entity).render());
@@ -168,6 +170,16 @@ public class SamarRoot extends ModuleRoot {
             }
         }
         return mapper.writeValueAsString(suggestions);
+    }
+
+    @GET
+    @Path("/samar/suggest")
+    @Produces("application/json")
+    // For some reason, the base URL is not always the same...
+    public String suggestConceptHack(@QueryParam("term")
+    String term) throws JsonGenerationException, JsonMappingException,
+            IOException, ClientException {
+        return suggestConcept(term);
     }
 
     public String getUserInput() {
@@ -197,5 +209,40 @@ public class SamarRoot extends ModuleRoot {
 
     public Double getDuration() {
         return durationMilliseconds / 1000.;
+    }
+
+    @GET
+    @Path("/normalizeEntityNames")
+    @Produces("application/json")
+    // Migration utility for entity name normalization
+    public String normalizeEntityNames(@QueryParam(value = "forceUpdate")
+    Boolean forceUpdate) throws JsonGenerationException, JsonMappingException,
+            IOException, ClientException {
+        String query = "SELECT * FROM Entity";
+        int updatedCount = 0;
+        int totalCount = 0;
+        int last = 0;
+        int batchSize = 1000;
+        boolean shouldStop = false;
+        if (forceUpdate == null) {
+            forceUpdate = false;
+        }
+        while (!shouldStop) {
+            DocumentModelList batch = session.query(query, null, batchSize,
+                    last, false);
+            for (DocumentModel entity : batch) {
+                if (entityService.updateNormalizedNames(entity, forceUpdate)) {
+                    updatedCount += 1;
+                }
+                totalCount += 1;
+                session.saveDocument(entity);
+                session.save();
+            }
+            shouldStop = batch.size() < batchSize;
+            last += batch.size();
+        }
+        return String.format(
+                "Normalized names of %d / %d entities in the repository.",
+                updatedCount, totalCount);
     }
 }
