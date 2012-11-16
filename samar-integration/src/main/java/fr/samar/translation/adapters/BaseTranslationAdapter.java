@@ -90,8 +90,23 @@ public class BaseTranslationAdapter implements TranslationAdapter {
         if (!doc.hasFacet(HAS_TRANSLATION)) {
             doc.addFacet(HAS_TRANSLATION);
         }
-        doc.setPropertyValue(TRANSLATED_FIELDS,
-                (Serializable) task.getTranslatedFields());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> oldFields = (List<Map<String, Object>>) doc.getPropertyValue(TRANSLATED_FIELDS);
+        for (Map<String, Object> newField : task.getTranslatedFields()) {
+            boolean updated = false;
+            for (Map<String, Object> oldField : oldFields) {
+                if ((oldField.get(PROPERTY_PATH).equals(newField.get(PROPERTY_PATH)))
+                        && (oldField.get(TranslationTask.LANGUAGE).equals(newField.get(TranslationTask.LANGUAGE)))) {
+                    // update the text of the old translation
+                    oldField.put(TEXT, newField.get(TEXT));
+                }
+            }
+            if (!updated) {
+                // append the new translation
+                oldFields.add(newField);
+            }
+        }
+        doc.setPropertyValue(TRANSLATED_FIELDS, (Serializable) oldFields);
     }
 
     @SuppressWarnings("unchecked")

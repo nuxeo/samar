@@ -62,8 +62,9 @@ public class TranslationWork extends AbstractWork {
 
     @Override
     public String getTitle() {
-        return String.format("Translation for: %s:%s", docLoc.getServerName(),
-                docLoc.getDocRef());
+        return String.format("Translation to %s for: %s:%s",
+                StringUtils.join(targetLanguages.toArray(), ","),
+                docLoc.getServerName(), docLoc.getDocRef());
     }
 
     @Override
@@ -275,6 +276,9 @@ public class TranslationWork extends AbstractWork {
                 return false;
             }
         } else if (!docLoc.equals(other.docLoc)) {
+            return false;
+        }
+        if (!targetLanguages.equals(other.targetLanguages)) {
             return false;
         }
         return true;

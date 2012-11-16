@@ -22,6 +22,20 @@
       </installationDirective>
     </command>
 
+    <command name="translate_ar_en_txt" enabled="true">
+      <commandLine>translate_ar_en_txt</commandLine>
+      <parameterString>#{inputFile}</parameterString>
+      <installationDirective>You need to install translate_ar_en_txt
+      </installationDirective>
+    </command>
+
+    <command name="translate_ar_en_xml" enabled="true">
+      <commandLine>translate_ar_en_xml</commandLine>
+      <parameterString>#{inputFile}</parameterString>
+      <installationDirective>You need to install translate_ar_en_xml
+      </installationDirective>
+    </command>
+
   </extension>
 
 </component>
