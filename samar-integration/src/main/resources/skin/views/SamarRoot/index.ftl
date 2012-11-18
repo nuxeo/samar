@@ -28,8 +28,9 @@
   <#list This.results as result>
   <div class="resultDoc ${result.doc.type} ${result.doc.id}">
     <#if result.doc.type == 'NewsML'>
-      <h2 class="headline lang-${result.doc.dublincore.language}"><i class="icon-doc-text"></i> ${result.doc.title}</h2>
-      <div class="newsMLContent lang-${result.doc.dublincore.language}">
+      <h2 class="headline lang-${result.doc.dublincore.language}" dir="auto"><i class="icon-doc-text"></i>
+       ${result.doc.title}</h2>
+      <div class="newsMLContent lang-${result.doc.dublincore.language}" dir="auto">
         ${result.doc.note.note}
       </div>
       <#include "entityOccurrence.ftl">
@@ -45,7 +46,8 @@
       </div>
 
     <#elseif result.doc.type == 'Video'>
-      <h2 class="headline lang-${result.doc.dublincore.language}"><i class="icon-video"></i> ${result.doc.title}</h2>
+      <h2 class="headline lang-${result.doc.dublincore.language}" dir="auto"><i class="icon-video"></i>
+       ${result.doc.title}</h2>
       <#if result.isVideoPlayerReady()>
         <div class="video-js-box">
           <!-- HTML5 player -->
@@ -57,7 +59,7 @@
         </div>
       </#if>
       <#if result.hasSpeechTranscription()>
-        <p class="videoTranscription lang-${result.doc.dublincore.language}">
+        <p class="videoTranscription lang-${result.doc.dublincore.language}" dir="auto">
           <#list result.doc.transcription.sections as section>
             <span class="videoTimeMarker" timecode=${section.timecode_start}>${section.text}</span>
           </#list>
