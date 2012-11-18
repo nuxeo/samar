@@ -1,7 +1,10 @@
 package fr.samar;
 
+import static org.nuxeo.ecm.platform.video.VideoConstants.STORYBOARD_PROPERTY;
+
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +17,7 @@ import org.nuxeo.ecm.core.api.model.PropertyException;
 import org.nuxeo.ecm.platform.semanticentities.adapter.OccurrenceRelation;
 import org.nuxeo.ecm.platform.ui.web.tag.fn.DocumentModelFunctions;
 import org.nuxeo.ecm.platform.video.TranscodedVideo;
+import org.nuxeo.ecm.platform.video.VideoConstants;
 import org.nuxeo.ecm.platform.video.VideoDocument;
 
 import fr.samar.translation.TranslationAdapter;
@@ -35,9 +39,12 @@ public class AnnotatedResult {
 
     protected final SamarTranslationAdapter translation;
 
-    public AnnotatedResult(DocumentModel doc, UriInfo info) {
+    protected final String baseURL;
+
+    public AnnotatedResult(DocumentModel doc, UriInfo info, String baseURL) {
         this.doc = doc;
         this.uriInfo = info;
+        this.baseURL = baseURL;
         this.translation = new SamarTranslationAdapter(doc);
         if (doc.getType().equals("Video")) {
             videoDocument = doc.getAdapter(VideoDocument.class);
@@ -98,29 +105,25 @@ public class AnnotatedResult {
     protected String getVideoLink(String mimetype,
             TranscodedVideo transcodedVideo) throws PropertyException,
             ClientException {
-        String url = uriInfo.getBaseUri().toASCIIString().replace("/site/", "/");
         String FILE_CONTENT = "file:content";
         Blob mainBlob = (Blob) doc.getPropertyValue(FILE_CONTENT);
         if (mainBlob != null && mimetype.equals(mainBlob.getMimeType())) {
-            url += DocumentModelFunctions.bigFileUrl(doc, FILE_CONTENT,
-                    mainBlob.getFilename()).replace("nullnxbigfile/",
-                    "nxbigfile/");
+            return bigFileUrl(FILE_CONTENT, mainBlob.getFilename());
         } else if (transcodedVideo != null) {
             String blobPropertyName = transcodedVideo.getBlobPropertyName();
-            url += DocumentModelFunctions.bigFileUrl(doc, blobPropertyName,
-                    transcodedVideo.getBlob().getFilename()).replace(
-                    "nullnxbigfile/", "nxbigfile/");
+            return bigFileUrl(blobPropertyName,
+                    transcodedVideo.getBlob().getFilename());
         } else {
-            return null;
+            throw new RuntimeException("No video blob for " + doc.getTitle());
         }
-        return url;
     }
 
     public TranslationAdapter getTranslation() {
         return translation;
     }
 
-    public String getTranslatedField(String propertyPath, String language) throws PropertyException, ClientException {
+    public String getTranslatedField(String propertyPath, String language)
+            throws PropertyException, ClientException {
         Map<String, Map<String, Object>> translations = translation.getTranslatedFields(propertyPath);
         Map<String, Object> translation = translations.get(language);
         if (translation == null) {
@@ -128,5 +131,32 @@ public class AnnotatedResult {
         } else {
             return (String) translation.get(TranslationAdapter.TEXT);
         }
+    }
+
+    public List<StoryboardItem> getStoryboard() throws PropertyException,
+            ClientException {
+        if (!doc.hasFacet(VideoConstants.HAS_STORYBOARD_FACET)) {
+            return Collections.emptyList();
+        }
+        int size = doc.getProperty(STORYBOARD_PROPERTY).getValue(List.class).size();
+        List<StoryboardItem> items = new ArrayList<StoryboardItem>(size);
+        for (int i = 0; i < size; i++) {
+            items.add(new StoryboardItem(doc, STORYBOARD_PROPERTY, i, baseURL));
+        }
+        return items;
+    }
+
+    public static String bigFileUrl(DocumentModel doc, String baseURL, String blobPropertyName, String filename) {
+        StringBuffer bigDownloadURL = new StringBuffer(baseURL);
+        bigDownloadURL.append("nxbigfile").append("/");
+        bigDownloadURL.append(doc.getRepositoryName()).append("/");
+        bigDownloadURL.append(doc.getRef().toString()).append("/");
+        bigDownloadURL.append(blobPropertyName).append("/");
+        bigDownloadURL.append(filename);
+        return bigDownloadURL.toString();
+    }
+
+    public String bigFileUrl(String blobPropertyName, String filename) {
+        return bigFileUrl(doc, baseURL, blobPropertyName, filename);
     }
 }

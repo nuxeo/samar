@@ -59,13 +59,19 @@
       <#if result.hasSpeechTranscription()>
         <p class="videoTranscription lang-${result.doc.dublincore.language}">
           <#list result.doc.transcription.sections as section>
-            <span class="transcriptionSection" timecode=${section.timecode_start}>${section.text}</span>
+            <span class="videoTimeMarker" timecode=${section.timecode_start}>${section.text}</span>
           </#list>
         </p>
       </#if>
      <#include "entityOccurrence.ftl">
      <div style="clear: both"></div>
-
+     <div class="storyboard">
+	 <#list result.storyboard as sbItem>
+	   <span class="videoTimeMarker storyboardItem" timecode="${sbItem.timecode}"><img
+	     src="${sbItem.url}" alt="Video at ${sbItem.timecode}s" width="100" height="62" /></span>
+	 </#list>
+	 </div>
+     <div style="clear: both"></div>
      <div class="translations">
        <#list result.translation.getTranslatedFields('relatedtext:relatedtextresources_transcription')?values as translation>
        <#if translation['text']?has_content>
@@ -91,12 +97,7 @@ jQuery(document).ready(function() {
       header: "ui-icon-circle-arrow-e",
       activeHeader: "ui-icon-circle-arrow-s"
   };
-  jQuery(".translations").accordion({
-      icons: icons,
-      collapsible: true,
-      active: false,
-      heightStyle: "content"
-  });
+
   jQuery("#queryForm .userInput").autocomplete({
     source: "samar/suggest",
     minLength: 2,
@@ -134,8 +135,8 @@ jQuery(document).ready(function() {
               video.play();
           }
       });
-      jQuery(this).find('.transcriptionSection').css('cursor', 'pointer');
-      jQuery(this).find('.transcriptionSection').click(function() {
+      jQuery(this).find('.videoTimeMarker').css('cursor', 'pointer');
+      jQuery(this).find('.videoTimeMarker').click(function() {
         var timecode = parseFloat(jQuery(this).attr('timecode'));
         if (video.buffered.length == 0) {
              // video has not yet been downloaded by the client: store
@@ -153,7 +154,12 @@ jQuery(document).ready(function() {
       });
     }
   });
-
+  jQuery(".translations").accordion({
+      icons: icons,
+      collapsible: true,
+      active: false,
+      heightStyle: "content"
+  });
   document.getElementById("q").focus();
 });
 -->

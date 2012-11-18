@@ -29,6 +29,7 @@ import org.nuxeo.ecm.platform.query.api.PageProvider;
 import org.nuxeo.ecm.platform.query.nxql.NXQLQueryBuilder;
 import org.nuxeo.ecm.platform.semanticentities.LocalEntityService;
 import org.nuxeo.ecm.platform.semanticentities.adapter.OccurrenceRelation;
+import org.nuxeo.ecm.platform.ui.web.util.BaseURL;
 import org.nuxeo.ecm.webengine.jaxrs.session.SessionFactory;
 import org.nuxeo.ecm.webengine.model.WebObject;
 import org.nuxeo.ecm.webengine.model.impl.ModuleRoot;
@@ -56,6 +57,8 @@ public class SamarRoot extends ModuleRoot {
 
     protected LocalEntityService entityService;
 
+    protected final String baseURL;
+
     public SamarRoot(@QueryParam("q")
     String userInput, @QueryParam("entity")
     List<String> entityIds, @QueryParam("type")
@@ -80,6 +83,7 @@ public class SamarRoot extends ModuleRoot {
             types = Arrays.asList("NewsML", "Video");
         }
         this.userInput = userInput;
+        this.baseURL = BaseURL.getBaseURL(request);
         String sanitizedInput = NXQLQueryBuilder.sanitizeFulltextInput(userInput);
         // TODO: escape special chars in type and entitiy ids inputs as well
         StringBuffer sb = new StringBuffer();
@@ -106,7 +110,8 @@ public class SamarRoot extends ModuleRoot {
         for (DocumentModel doc : documents) {
             PageProvider<DocumentModel> allEntities = entityService.getRelatedEntities(
                     session, doc.getRef(), null);
-            AnnotatedResult result = new AnnotatedResult(doc, uriInfo);
+
+            AnnotatedResult result = new AnnotatedResult(doc, uriInfo, baseURL);
             for (DocumentModel entity : allEntities.getCurrentPage()) {
                 OccurrenceRelation occurrence = entityService.getOccurrenceRelation(
                         session, doc.getRef(), entity.getRef());
@@ -192,10 +197,6 @@ public class SamarRoot extends ModuleRoot {
 
     public List<AnnotatedResult> getResults() {
         return results;
-    }
-
-    public String getBaseUrl() {
-        return uriInfo.getAbsolutePathBuilder().build().toASCIIString();
     }
 
     public String getCurrentQueryUrl() {
