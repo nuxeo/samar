@@ -176,3 +176,7 @@ li.tag topic {
 	border: 1px solid black;
 	width: 98px;
 }
+
+video {
+	border: 1px solid black;
+}
