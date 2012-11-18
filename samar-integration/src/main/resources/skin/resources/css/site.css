@@ -150,7 +150,8 @@ li.tag topic {
 	font-size: 200%;
 }
 
-.results h2 a, .results h2 a:visited {
+h2 a, .results h2 a:visited,
+h3 a, .results h3 a:visited {
 	text-decoration: none;
 	color: black;
 }
@@ -189,4 +190,22 @@ li.tag topic {
 
 video {
 	border: 1px solid black;
+}
+
+.mention {
+	background-color: #ffe6ba;
+}
+
+.entityDepiction {
+	text-align: left;
+	float: left;
+    margin: 0 1em 1em 0;
+}
+.entityDepiction img {
+	max-height: 200px;
+	padding: 1px;
+	border: 1px solid gray;
+}
+
+.entitySummary {
 }

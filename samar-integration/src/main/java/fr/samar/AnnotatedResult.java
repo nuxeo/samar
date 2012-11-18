@@ -47,7 +47,7 @@ public class AnnotatedResult {
         this.doc = doc;
         this.uriInfo = info;
         this.baseURL = baseURL;
-        this.backofficeURL = baseURL + "nxpath/" + doc.getRepositoryName() + doc.getPathAsString() + "@view_documents";
+        this.backofficeURL = URLHelper.documentUrl(doc, baseURL);
         this.translation = new SamarTranslationAdapter(doc);
         if (doc.getType().equals("Video")) {
             videoDocument = doc.getAdapter(VideoDocument.class);
@@ -156,18 +156,10 @@ public class AnnotatedResult {
         return items;
     }
 
-    public static String bigFileUrl(DocumentModel doc, String baseURL, String blobPropertyName, String filename) {
-        StringBuffer bigDownloadURL = new StringBuffer(baseURL);
-        bigDownloadURL.append("nxbigfile").append("/");
-        bigDownloadURL.append(doc.getRepositoryName()).append("/");
-        bigDownloadURL.append(doc.getRef().toString()).append("/");
-        bigDownloadURL.append(blobPropertyName).append("/");
-        bigDownloadURL.append(filename);
-        return bigDownloadURL.toString();
-    }
+
 
     public String bigFileUrl(String blobPropertyName, String filename) {
-        return bigFileUrl(doc, baseURL, blobPropertyName, filename);
+        return URLHelper.bigFileUrl(doc, baseURL, blobPropertyName, filename);
     }
 
     public String getBackofficeURL() {

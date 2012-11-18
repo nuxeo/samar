@@ -59,7 +59,7 @@ public class StoryboardItem {
         } catch (Exception e) {
             log.warn(e);
         }
-        url = AnnotatedResult.bigFileUrl(doc, baseURL, blobPropertyName,
+        url = URLHelper.bigFileUrl(doc, baseURL, blobPropertyName,
                 filename);
     }
 

@@ -4,13 +4,27 @@
    TODO: support multilingual entity fields at least for names and summaries.
    -->
   <#list result.occurrences as occurrence>
-  <li class="${occurrence.targetEntity.entity.summary?has_content?string('entityOccurrence tag', 'tag')}">
-    <a href="${This.currentQueryUrl}&entity=${occurrence.targetEntity.id}">${occurrence.targetEntity.title}</a></li>
-  <#if occurrence.targetEntity.entity.summary?has_content>
-    <div class="entityTooltip">
-      <h3 dir="auto">${occurrence.targetEntity.title}</h3>
-      <p class="ellipsis" dir="auto">${occurrence.targetEntity.entity.summary}</p>
+  <#assign entity = occurrence.targetEntity>
+  <li class="entityOccurrence tag">
+    <a href="${This.currentQueryUrl}&entity=${entity.id}">${entity.title}</a></li>
+  <div class="entityTooltip">
+    <div class="entityDepiction">
+      <#if entity.entity.depiction.filename?has_content>
+      <img src="${This.bigFileUrl(entity, 'entity:depiction', '')}" />
+      <#else>
+      <img src="${This.baseURL}icons/${entity.type}_100.png" />
+      </#if>
     </div>
-  </#if>
+    <div class="entitySummary">
+      <h3 dir="auto"><a href="${This.getBackofficeURL(entity)}">${entity.title}</a></h3>
+      <p class="ellipsis" dir="auto">${entity.entity.summary}</p>
+    </div>
+    <div style="clear: both"></div>
+    <h4 dir="auto">${Context.getMessage('heading.mentionsInCurrentDocument')}</h4>
+    <#list occurrence.occurrences as mentionContext>
+      <p dir="auto">...${mentionContext.prefixContext} <span class="mention">${mentionContext.mention}</span>
+        ${mentionContext.suffixContext}...</p>
+    </#list>
+  </div>
   </#list>
 </ul>
