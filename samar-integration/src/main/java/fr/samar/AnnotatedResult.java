@@ -41,10 +41,13 @@ public class AnnotatedResult {
 
     protected final String baseURL;
 
+    protected final String backofficeURL;
+
     public AnnotatedResult(DocumentModel doc, UriInfo info, String baseURL) {
         this.doc = doc;
         this.uriInfo = info;
         this.baseURL = baseURL;
+        this.backofficeURL = baseURL + "nxpath/" + doc.getRepositoryName() + doc.getPathAsString() + "@view_documents";
         this.translation = new SamarTranslationAdapter(doc);
         if (doc.getType().equals("Video")) {
             videoDocument = doc.getAdapter(VideoDocument.class);
@@ -158,5 +161,9 @@ public class AnnotatedResult {
 
     public String bigFileUrl(String blobPropertyName, String filename) {
         return bigFileUrl(doc, baseURL, blobPropertyName, filename);
+    }
+
+    public String getBackofficeURL() {
+        return backofficeURL;
     }
 }

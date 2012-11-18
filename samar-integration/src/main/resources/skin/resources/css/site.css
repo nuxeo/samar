@@ -150,6 +150,11 @@ li.tag topic {
 	font-size: 200%;
 }
 
+.results h2 a, .results h2 a:visited {
+	text-decoration: none;
+	color: black;
+}
+
 .results .duration {
 	margin-top: 2em;
 	color: #ddd;
@@ -165,4 +170,9 @@ li.tag topic {
 
 .storyboard {
 	text-align: center;
+}
+
+.storyboard img {
+	border: 1px solid black;
+	width: 98px;
 }

@@ -246,4 +246,8 @@ public class SamarRoot extends ModuleRoot {
                 "Normalized names of %d / %d entities in the repository.",
                 updatedCount, totalCount);
     }
+
+    public String getBaseURL() {
+        return baseURL;
+    }
 }

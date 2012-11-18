@@ -29,7 +29,7 @@
   <div class="resultDoc ${result.doc.type} ${result.doc.id}">
     <#if result.doc.type == 'NewsML'>
       <h2 class="headline lang-${result.doc.dublincore.language}" dir="auto"><i class="icon-doc-text"></i>
-       ${result.doc.title}</h2>
+       <a href="${result.backofficeURL}">${result.doc.title}</a></h2>
       <div class="newsMLContent lang-${result.doc.dublincore.language}" dir="auto">
         ${result.doc.note.note}
       </div>
@@ -47,7 +47,7 @@
 
     <#elseif result.doc.type == 'Video'>
       <h2 class="headline lang-${result.doc.dublincore.language}" dir="auto"><i class="icon-video"></i>
-       ${result.doc.title}</h2>
+       <a href="${result.backofficeURL}">${result.doc.title}</a></h2>
       <#if result.isVideoPlayerReady()>
         <div class="video-js-box">
           <!-- HTML5 player -->
