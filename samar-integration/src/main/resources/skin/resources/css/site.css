@@ -175,6 +175,16 @@ li.tag topic {
 .storyboard img {
 	border: 1px solid black;
 	width: 98px;
+	opacity: 0.7;
+}
+
+.storyboard span.nowPlaying img {
+	border-color: #ffe6ba;
+	opacity: 1.0;
+}
+
+.storyboard span img:hover {
+	opacity: 1.0;
 }
 
 video {

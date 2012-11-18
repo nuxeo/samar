@@ -61,7 +61,7 @@
       <#if result.hasSpeechTranscription()>
         <p class="videoTranscription lang-${result.doc.dublincore.language}" dir="auto">
           <#list result.doc.transcription.sections as section>
-            <span class="videoTimeMarker" timecode=${section.timecode_start}>${section.text}</span>
+            <span class="videoTimeMarker" timecode=${section.timecode_start} endTimecode=${section.timecode_stop}>${section.text}</span>
           </#list>
         </p>
       </#if>
@@ -69,8 +69,8 @@
      <div style="clear: both"></div>
      <div class="storyboard">
 	 <#list result.storyboard as sbItem>
-	   <span class="videoTimeMarker storyboardItem" timecode="${sbItem.timecode}"><img
-	     src="${sbItem.url}" alt="Video at ${sbItem.timecode}s" width="100" height="62" /></span>
+	   <span class="videoTimeMarker storyboardItem" timecode="${sbItem.startTimecode}" endTimecode="${sbItem.endTimecode}"><img
+	     src="${sbItem.url}" alt="Video at ${sbItem.startTimecode}s" width="100" height="62" /></span>
 	 </#list>
 	 </div>
      <div style="clear: both"></div>
@@ -126,7 +126,8 @@ jQuery(document).ready(function() {
     tipClass: "entityTooltip",
   });
   jQuery(".Video").each(function () {
-    var videoJsElement = jQuery(this).find(".video-js");
+    var videoArea = jQuery(this);
+    var videoJsElement = videoArea.find(".video-js");
     if (videoJsElement.length > 0 && videoJsElement.get(0) != 'undefined') {
       var video = videoJsElement.get(0);
       jQuery(video).on('canplay', function(e) {
@@ -136,6 +137,23 @@ jQuery(document).ready(function() {
               video.seekToTimeWhenReady = undefined;
               video.play();
           }
+      });
+      jQuery(video).on('timeupdate', function(e) {
+         if (video.previousTimeupdate != undefined
+            && Math.abs(video.currentTime - video.previousTimeupdate) < 0.5) {
+            // ignore too frequent time update notifications
+            return false;
+         }
+         video.previousTimeupdate = video.currentTime;
+         var now = video.currentTime;
+         jQuery.each(videoArea.find('.videoTimeMarker'), function(i, e) {
+           if (now >= parseFloat(e.getAttribute('timecode'))
+               && now < parseFloat(e.getAttribute('endTimecode'))) {
+               jQuery(e).addClass('nowPlaying');
+           } else {
+               jQuery(e).removeClass('nowPlaying');
+           }
+         });
       });
       jQuery(this).find('.videoTimeMarker').css('cursor', 'pointer');
       jQuery(this).find('.videoTimeMarker').click(function() {

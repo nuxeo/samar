@@ -38,7 +38,9 @@ public class StoryboardItem {
 
     protected final String url;
 
-    protected String timecode = "0";
+    protected String startTimecode = "0";
+
+    protected String endTimecode = "0";
 
     public StoryboardItem(DocumentModel doc, String basePropertyPath,
             int position, String baseURL) {
@@ -51,7 +53,7 @@ public class StoryboardItem {
             Double tc = doc.getProperty(propertyPath + "/timecode").getValue(
                     Double.class);
             if (tc != null) {
-                timecode = String.format("%f", Math.floor(tc));
+                startTimecode = String.format("%f", Math.floor(tc));
             }
             // TODO: read filename from blob too
         } catch (Exception e) {
@@ -65,7 +67,15 @@ public class StoryboardItem {
         return url;
     }
 
-    public String getTimecode() {
-        return timecode;
+    public String getStartTimecode() {
+        return startTimecode;
+    }
+
+    public void setEndTimecode(String endTimecode) {
+        this.endTimecode = endTimecode;
+    }
+
+    public String getEndTimecode() {
+        return endTimecode;
     }
 }

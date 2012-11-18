@@ -143,8 +143,15 @@ public class AnnotatedResult {
         }
         int size = doc.getProperty(STORYBOARD_PROPERTY).getValue(List.class).size();
         List<StoryboardItem> items = new ArrayList<StoryboardItem>(size);
+        StoryboardItem previous = null;
         for (int i = 0; i < size; i++) {
-            items.add(new StoryboardItem(doc, STORYBOARD_PROPERTY, i, baseURL));
+            StoryboardItem next = new StoryboardItem(doc, STORYBOARD_PROPERTY, i, baseURL);
+            next.setEndTimecode(String.valueOf(videoDocument.getVideo().getDuration()));
+            if (previous != null) {
+                previous.setEndTimecode(next.startTimecode);
+            }
+            items.add(next);
+            previous = next;
         }
         return items;
     }
