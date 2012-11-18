@@ -117,7 +117,7 @@ public class AnnotatedResult {
             return bigFileUrl(blobPropertyName,
                     transcodedVideo.getBlob().getFilename());
         } else {
-            throw new RuntimeException("No video blob for " + doc.getTitle());
+            return null;
         }
     }
 
