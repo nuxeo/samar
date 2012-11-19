@@ -5,7 +5,7 @@
    -->
   <#list result.occurrences as occurrence>
   <#assign entity = occurrence.targetEntity>
-  <li class="entityOccurrence tag">
+  <li class="entityOccurrence tag entity-${entity.type}">
     <a href="${This.currentQueryUrl}&entity=${entity.id}">${entity.title}</a></li>
   <div class="entityTooltip">
     <div class="entityDepiction">
@@ -20,11 +20,13 @@
       <p class="ellipsis" dir="auto">${entity.entity.summary}</p>
     </div>
     <div style="clear: both"></div>
+    <#if occurrence.getOccurrences(3)?has_content>
     <h4 dir="auto">${Context.getMessage('heading.mentionsInCurrentDocument')}</h4>
-    <#list occurrence.occurrences as mentionContext>
+    <#list occurrence.getOccurrences(3) as mentionContext>
       <p dir="auto">...${mentionContext.prefixContext} <span class="mention">${mentionContext.mention}</span>
         ${mentionContext.suffixContext}...</p>
     </#list>
+    </#if>
   </div>
   </#list>
 </ul>
