@@ -1,4 +1,4 @@
-<li class="entityFacet tag">${entity.title} <a href="#"
+<li class="entityFacet tag entity-${entity.type}">${entity.title} <a href="#"
  class="removeEntityLink" entity="${entity.id}">x</a></li>
 <div class="entityTooltip">
     <div class="entityDepiction">
