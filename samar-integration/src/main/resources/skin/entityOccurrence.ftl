@@ -17,7 +17,8 @@
     </div>
     <div class="entitySummary">
       <h3 dir="auto"><a href="${This.getBackofficeURL(entity)}">${entity.title}</a></h3>
-      <p class="ellipsis" dir="auto">${entity.entity.summary}</p>
+      <p class="altnames">${This.joinNames(entity.entity.altnames)}</p>
+      <p dir="auto">${entity.entity.summary}</p>
     </div>
     <div style="clear: both"></div>
     <#if occurrence.getOccurrences(3)?has_content>

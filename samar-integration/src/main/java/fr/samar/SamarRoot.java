@@ -250,12 +250,16 @@ public class SamarRoot extends ModuleRoot {
     public String getBaseURL() {
         return baseURL;
     }
-    
+
     public String bigFileUrl(DocumentModel doc, String blobPropertyName, String filename) {
         return URLHelper.bigFileUrl(doc, baseURL, blobPropertyName, filename);
     }
-    
+
     public String getBackofficeURL(DocumentModel doc) {
         return URLHelper.documentUrl(doc, baseURL);
+    }
+
+    public String joinNames(List<String> names) {
+        return StringUtils.join(names, ", ");
     }
 }

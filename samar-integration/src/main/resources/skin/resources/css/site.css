@@ -211,5 +211,7 @@ video {
 	border: 1px solid gray;
 }
 
-.entitySummary {
+.entitySummary .altnames {
+	direction: ltr;
+	font-style: italic;
 }

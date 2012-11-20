@@ -10,6 +10,7 @@
     </div>
     <div class="entitySummary">
       <h3 dir="auto"><a href="${This.getBackofficeURL(entity)}">${entity.title}</a></h3>
+      <p class="altnames">${This.joinNames(entity.entity.altnames)}</p>
       <p class="ellipsis" dir="auto">${entity.entity.summary}</p>
     </div>
     <div style="clear: both"></div>
