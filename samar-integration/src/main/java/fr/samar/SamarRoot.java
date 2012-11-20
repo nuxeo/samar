@@ -260,6 +260,9 @@ public class SamarRoot extends ModuleRoot {
     }
 
     public String joinNames(List<String> names) {
+        if (names == null) {
+            return "";
+        }
         return StringUtils.join(names, ", ");
     }
 }
