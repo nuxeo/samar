@@ -9,13 +9,10 @@ import org.nuxeo.ecm.core.work.api.WorkManager.Scheduling;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.DefaultComponent;
 
-
 public class TranslationService extends DefaultComponent {
 
-    // TODO: unhardcode me and reenable "en" once the segmentation of moses
-    // on english models is fixed.
-    //public List<String> targetLanguages = Arrays.asList("fr", "en");
-    public List<String> targetLanguages = Arrays.asList("fr");
+    // TODO: unhardcode me
+    public List<String> targetLanguages = Arrays.asList("fr", "en");
 
     public void launchTranslation(DocumentLocation docLoc) {
         WorkManager workManager = Framework.getLocalService(WorkManager.class);
